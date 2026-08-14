@@ -1,0 +1,37 @@
+# Local development stack: the REST service plus a Postgres container.
+#
+# The service in this topic still uses the in-memory repository from
+# internal/repository — Postgres here is included to show what adding a
+# real dependency looks like with docker-compose, which is the natural
+# next step once InMemoryRepository gets swapped for a Postgres-backed
+# implementation of the same repository.ItemRepository interface. The
+# DB_* environment variables below are wired up for that next step; the
+# app doesn't read them yet.
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: rest_service
+      DB_PASSWORD: rest_service
+      DB_NAME: rest_service
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rest_service
+      POSTGRES_PASSWORD: rest_service
+      POSTGRES_DB: rest_service
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

@@ -1,0 +1,29 @@
+// Exercise 6 (optional/stretch) reference.
+//
+// This file is intentionally named .go.txt, not _test.go, so the lab
+// compiles and runs offline with no network access and no go.sum entry
+// for a third-party module. If you want to actually run this:
+//
+//   1. From labs/solution/, run: go get github.com/stretchr/testify
+//   2. Rename this file to testify_example_test.go
+//   3. Run: go test ./internal/billing/...
+//
+// This is the SAME TestTenPercentOff from exercise 1, rewritten with
+// testify's assert package instead of a manual if/t.Errorf. Compare
+// the two side by side and form your own opinion on which you'd reach
+// for - especially when teaching Go to people seeing it for the first
+// time, where "no hidden magic, just an if statement" is often the
+// more valuable lesson than the shorter assertion call.
+
+package billing
+
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+func TestTenPercentOff_Testify(t *testing.T) {
+	got := TenPercentOff(100)
+	assert.Equal(t, 90.0, got, "TenPercentOff(100) should apply a 10%% discount")
+}

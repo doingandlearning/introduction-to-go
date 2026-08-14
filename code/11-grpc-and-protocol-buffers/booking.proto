@@ -1,0 +1,53 @@
+// booking.proto
+//
+// This file is REAL, plain-text protobuf -- there is no Go toolchain
+// involved in writing it, and it needs none to be valid. It is the
+// actual teaching artifact for this topic: the source of truth that
+// `protoc` would compile into Go (and Java, Python, etc.) types.
+//
+// To generate Go code from this file in a real environment:
+//   protoc --go_out=. --go_opt=paths=source_relative \
+//          --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+//          booking.proto
+//
+// See code/README.md for full toolchain setup.
+
+syntax = "proto3";
+
+package booking;
+
+option go_package = "example.com/grpc-protobuf/bookingpb";
+
+// Booking mirrors the struct used in Topic 10's REST service -- same
+// fields, same domain, deliberately, so the two topics are directly
+// comparable (see labs/exercise.md, exercise 6).
+message Booking {
+  string id = 1;
+  string guest = 2;
+  int32 nights = 3;
+
+  // Field 4 was "notes" (string) in an earlier revision of this schema
+  // and was removed before it shipped anywhere. Reserved, never reused --
+  // see the slide deck section on schema evolution and lab exercise 5.
+  reserved 4;
+  reserved "notes";
+}
+
+message GetBookingRequest {
+  string id = 1;
+}
+
+message ListBookingsRequest {
+  // Empty for now -- deliberately: a real version might add pagination
+  // fields here later without breaking anything, which is the whole
+  // point of numbered, additive schema evolution.
+}
+
+service BookingService {
+  // Unary: one request in, one response out. The REST-like default.
+  rpc GetBooking(GetBookingRequest) returns (Booking);
+
+  // Server streaming: one request in, a stream of responses out.
+  // No clean REST/JSON equivalent -- see slide deck.
+  rpc ListBookings(ListBookingsRequest) returns (stream Booking);
+}

@@ -1,0 +1,22 @@
+# Solution — Exercise 2: FROM scratch, WITH the CA certificates fix.
+#
+# Without the second COPY --from=builder line below, GET /outbound
+# fails: x509: certificate signed by unknown authority (or similar) —
+# scratch has no CA trust store, no /etc/ssl/certs, nothing. The build
+# stage's Debian-based golang image already has a full, up-to-date
+# CA bundle; copying it across is the fix, not installing anything new.
+
+# --- build stage ---
+FROM golang:1.22 AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
+
+# --- final stage ---
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /server /server
+EXPOSE 8080
+ENTRYPOINT ["/server"]
