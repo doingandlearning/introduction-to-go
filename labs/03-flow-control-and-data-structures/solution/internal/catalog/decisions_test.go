@@ -1,3 +1,8 @@
+// This test file is already complete — you're not writing it. It's the
+// specification for Exercise 2: run `go test ./...` now, before touching
+// decisions.go, and both tests fail. Implement LateFeeTier and
+// DeskSchedule until they pass. Writing a test like this yourself is
+// Topic 12's job, not this one's.
 package catalog
 
 import "testing"

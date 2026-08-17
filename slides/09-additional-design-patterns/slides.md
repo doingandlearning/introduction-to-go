@@ -125,10 +125,27 @@ is the sticky note.
 
 ## Strategy: pros and cons
 
-| | |
-|---|---|
-| **Pros** | Minimal ceremony — a function type + functions, no class hierarchy. Trivial to test: call the function directly, no mock framework. Composes directly with functional options from Topic 6. |
-| **Cons** | If the "strategy" genuinely needs more than one method, or state a closure can't hold, a bare func type stops being enough — you're back to an interface + structs anyway. |
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+# Pros
+
+- Minimal ceremony — a function type + functions, no class hierarchy.
+- Trivial to test: call the function directly, no mock framework.
+- Composes directly with functional options from Topic 6. 
+<!-- column: 1 -->
+
+<!-- pause -->
+
+# Cons
+
+
+- If the "strategy" genuinely needs more than one method, or state a closure can't hold, a bare func type stops being enough — you're back to an interface + structs anyway. 
+
+
+<!-- pause -->
+
+<!-- reset_layout -->
 
 **In breakout rooms (5 minutes):** Take the `DiscountStrategy` idea and
 add a requirement — the strategy now needs to log every application to
@@ -198,10 +215,26 @@ of those reasons — the pattern is real, but it's reached for less often.
 
 ## Abstract Factory: pros and cons
 
-| | |
-|---|---|
-| **Pros** | Swapping an entire coordinated family (all-MySQL vs all-Postgres) is one line at the composition root. Callers never touch a concrete type. |
-| **Cons** | Genuinely more ceremony than Go culture usually wants for "just pick one DB driver." Easy to over-apply — if you only ever have one real implementation, it's premature abstraction. |
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+# Pros
+
+- Swapping an entire coordinated family (all-MySQL vs all-Postgres) is one line at the composition root.
+- Callers never touch a concrete type. 
+<!-- pause -->
+
+<!-- column: 1 -->
+# Cons
+
+
+- Genuinely more ceremony than Go culture usually wants for "just pick one DB driver." 
+- Easy to over-apply — if you only ever have one real implementation, it's premature abstraction. 
+
+<!-- pause -->
+
+<!-- reset_layout -->
+
 
 **Type in chat: using Topic 8's rule — "extract an interface when you
 actually have two implementations" — would you reach for
@@ -315,10 +348,26 @@ speaker_note: |
 
 ## Decorator: pros and cons
 
-| | |
-|---|---|
-| **Pros** | Composable — stack as many as you want, in any order, each independently testable and reusable across handlers. Falls directly out of interfaces + first-class functions, zero extra language machinery. |
-| **Cons** | Ordering matters and isn't always obvious from the call site. A long chain gets hard to trace — "which of these six wrappers actually set this header?" |
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+
+# Pros
+
+- Composable — stack as many as you want, in any order, each independently testable and reusable across handlers. 
+- Falls directly out of interfaces + first-class functions, zero extra language machinery. 
+<!-- pause -->
+
+<!-- column: 1 -->
+# Cons
+
+- Ordering matters and isn't always obvious from the call site. 
+- A long chain gets hard to trace — "which of these six wrappers actually set this header?" 
+
+<!-- pause -->
+
+<!-- reset_layout -->
+
 
 **Demo:** chain `LoggingMiddleware` and a header-setting middleware
 around one handler two different ways, and compare what each ordering
@@ -419,10 +468,25 @@ speaker_note: |
 
 ## Builder: pros and cons
 
-| | |
-|---|---|
-| **Pros** | Natural place for step-by-step validation and required ordering. Reads clearly at the call site — chained, self-documenting. |
-| **Cons** | More boilerplate than functional options for the common "some independent optional knobs" case. Picking the wrong one for the job is a real, common mistake. |
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+# Pros
+
+- Natural place for step-by-step validation and required ordering. 
+- Reads clearly at the call site — chained, self-documenting. 
+
+
+<!-- pause -->
+
+<!-- column: 1 -->
+# Cons
+
+- More boilerplate than functional options for the common "some independent optional knobs" case. 
+- Picking the wrong one for the job is a real, common mistake. 
+<!-- pause -->
+
+<!-- reset_layout -->
 
 Exercise 5 in the lab makes you build the same thing both ways and feel
 the seam yourself — the "it depends" isn't a cop-out, it's the actual
@@ -571,10 +635,27 @@ speaker_note: |
 
 ## Manual DI: pros and cons
 
-| | |
-|---|---|
-| **Pros** | Fully explicit dependency graph — readable top to bottom in `main`, no "magic" injection. Trivial to substitute test doubles — pass a fake `Repository`/`Notifier` in a test. Zero framework dependency or startup cost. |
-| **Cons** | Genuinely more typing than a DI container for large graphs. Easy for the composition root to become one large, unwieldy `main` if not organized. |
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+# Pros
+
+- Fully explicit dependency graph — readable top to bottom in `main`, no "magic" injection. 
+- Trivial to substitute test doubles — pass a fake `Repository`/`Notifier` in a test. Zero framework dependency or startup cost. 
+
+<!-- pause -->
+
+<!-- column: 1 -->
+# Cons
+
+- Genuinely more typing than a DI container for large graphs. 
+- Easy for the composition root to become one large, unwieldy `main` if not organized. 
+
+<!-- pause -->
+
+<!-- reset_layout -->
+
+
 
 <!-- pause -->
 

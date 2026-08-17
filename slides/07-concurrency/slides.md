@@ -675,6 +675,50 @@ rule you contort code to satisfy.
 
 <!-- end_slide -->
 
+## `sync.RWMutex`: many readers, one writer
+
+A plain `Mutex` locks for every access, even when ten goroutines just want
+to *read* the same value at once. `RWMutex` splits that: `RLock`/`RUnlock`
+for reads, `Lock`/`Unlock` for writes.
+
+```go
+var mu sync.RWMutex
+var cache map[string]string
+
+func lookup(key string) string {
+    mu.RLock()
+    defer mu.RUnlock()
+    return cache[key]
+}
+
+func update(key, value string) {
+    mu.Lock()
+    defer mu.Unlock()
+    cache[key] = value
+}
+```
+
+<!-- pause -->
+
+Any number of readers can hold `RLock` at the same time — they never block
+each other. A writer holding `Lock` blocks everyone, readers included.
+
+<!-- pause -->
+
+**Reach for it when reads vastly outnumber writes** — an in-memory cache, a
+config map read on every request and updated rarely. For write-heavy or
+evenly-mixed access, a plain `Mutex` is simpler and no slower — `RWMutex`
+adds bookkeeping that only pays off when read contention is real.
+
+<!--
+speaker_note: |
+  This is the exact type Topic 10's in-memory repository guards its map
+  with - flag that connection now so it lands as a callback later,
+  not a brand-new type showing up mid-REST-topic.
+-->
+
+<!-- end_slide -->
+
 <!-- jump_to_middle -->
 
 Putting it together: worker pools
@@ -728,7 +772,7 @@ every worker has finished before that happens.
 4. **`select` waits on multiple channels**: `default` makes it non-blocking, `time.After` gives you timeouts
 5. **Closing is a signal, not cleanup**: close from the sender, detect with comma-ok, never close twice
 6. **Two failure modes to know by sight**: whole-program deadlock crashes loudly; races need `-race` to see
-7. **Mutexes are still valid**: "share memory by communicating" is the default, not a law
+7. **Mutexes are still valid**: "share memory by communicating" is the default, not a law; `RWMutex` splits readers from writers when reads dominate
 8. **Test outcomes, not order**: a deterministic concurrency test asserts the aggregate result — a count, a sum, a full result set — never which goroutine ran first
 
 <!-- end_slide -->

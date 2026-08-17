@@ -1,12 +1,18 @@
 package catalog
 
-// PrintCatalog prints each book's title and copy count.
+import "io"
+
+// PrintCatalog prints each book's title and copy count to w, using a
+// classic C-style for loop.
 //
-// TODO(Exercise 1): implement using a classic C-style for loop —
-// for i := 0; i < len(books); i++ { ... }
-func PrintCatalog(books []Book) {
-	// TODO: replace this with a classic for loop over books, printing
-	// something like: "  <title> — <copies> cop(y/ies)"
+// TODO(Exercise 1): implement this. It should:
+//  1. Add an `import "fmt"` line above `package catalog` — this file
+//     doesn't import it yet, since nothing here needs it until you do.
+//  2. Loop over books with a classic C-style for loop —
+//     `for i := 0; i < len(books); i++ { ... }` — printing each one to w
+//     with fmt.Fprintf, something like: "  <title> — <copies> cop(y/ies)".
+func PrintCatalog(w io.Writer, books []Book) {
+	// TODO: replace this placeholder.
 	_ = books
 }
 

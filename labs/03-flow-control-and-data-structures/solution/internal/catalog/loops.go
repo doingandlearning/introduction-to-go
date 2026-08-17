@@ -1,12 +1,15 @@
 package catalog
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
-// PrintCatalog prints each book's title and copy count using a classic
-// C-style for loop.
-func PrintCatalog(books []Book) {
+// PrintCatalog prints each book's title and copy count to w, using a
+// classic C-style for loop.
+func PrintCatalog(w io.Writer, books []Book) {
 	for i := 0; i < len(books); i++ {
-		fmt.Printf("  %s — %d cop(y/ies)\n", books[i].Title, books[i].Copies)
+		fmt.Fprintf(w, "  %s — %d cop(y/ies)\n", books[i].Title, books[i].Copies)
 	}
 }
 

@@ -1,16 +1,31 @@
+// This test file is already complete — you're not writing it. It's the
+// specification for Exercise 3: run `go test ./...` now, before touching
+// structs.go, and both tests fail. Implement ResetCopies and
+// ResetCopiesPtr until they pass. Writing a test like this yourself is
+// Topic 12's job, not this one's.
 package catalog
 
 import "testing"
 
-// TODO (Exercise 7): write TestResetCopies — call ResetCopies on a Book
-// with a nonzero Copies, and assert BOTH that the returned copy has
-// Copies == 0 AND that the original Book you passed in is unchanged.
 func TestResetCopies(t *testing.T) {
-	t.Skip("TODO: implement TestResetCopies")
+	original := Book{Title: "The Go Programming Language", Copies: 2}
+
+	reset := ResetCopies(original)
+
+	if reset.Copies != 0 {
+		t.Errorf("ResetCopies(...).Copies = %d, want 0", reset.Copies)
+	}
+	if original.Copies != 2 {
+		t.Errorf("original.Copies = %d, want unchanged 2 — ResetCopies must not mutate its argument", original.Copies)
+	}
 }
 
-// TODO (Exercise 7): write TestResetCopiesPtr — call ResetCopiesPtr on
-// a &Book and assert the original now has Copies == 0.
 func TestResetCopiesPtr(t *testing.T) {
-	t.Skip("TODO: implement TestResetCopiesPtr")
+	book := Book{Title: "Design Patterns", Copies: 5}
+
+	ResetCopiesPtr(&book)
+
+	if book.Copies != 0 {
+		t.Errorf("book.Copies = %d, want 0 after ResetCopiesPtr", book.Copies)
+	}
 }

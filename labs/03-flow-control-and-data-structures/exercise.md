@@ -3,6 +3,14 @@
 Starter code is in `starter/` (TODOs to fill in). A complete reference is
 in `solution/` — don't look until you've had a go.
 
+**Every implementable exercise below ships with its test already
+written**, sitting in `starter/internal/catalog/loops_test.go`,
+`decisions_test.go`, and `structs_test.go`. Run `go test ./...` from
+`starter/` right now, before you change anything — every test fails.
+That's the starting line, not a bug. Your job in each exercise is to make
+the named test pass, not to write a new one; writing tests yourself is
+Topic 12's job.
+
 Both directories share the same shape: a `cmd/librarian` package (the
 program entry point) and an `internal/catalog` package (the helper code
 you'll implement). The scenario throughout is a small library circulation
@@ -13,26 +21,37 @@ every language feature in this topic something concrete to operate on.
 
 ## Exercise 1: Three shapes of `for`
 
-**Objective:** Use all three non-range shapes of Go's single loop keyword.
+**Objective:** Use all three non-range shapes of Go's single loop keyword
+— and watch three pre-written tests go from red to green as you do.
 
 **Context:** `starter/internal/catalog/loops.go` has three `TODO`
 functions operating on a `[]Book` (a `Book` is `{Title string; Copies
-int}`, defined in `catalog.go`).
+int}`, defined in `catalog.go`). `TestPrintCatalog`, `TestCountAvailable`,
+and `TestFindFirstAvailable` in `loops_test.go` are already written and
+already failing. `PrintCatalog` takes an `io.Writer` instead of printing
+straight to the terminal — the same reason `fmt.Fprintf` showed up in
+Topic 2's slides ("`fmt` doesn't just print to the terminal"): a function
+that writes to whatever `io.Writer` it's given can be pointed at a
+`bytes.Buffer` in a test, not just `os.Stdout`.
 
 **Tasks:**
 
-1. Implement `PrintCatalog(books []Book)` with a **classic C-style** `for`
-   loop (`for i := 0; i < len(books); i++`) that prints each book's title
-   and copy count.
-2. Implement `CountAvailable(books []Book) int` with a **while-style**
+1. Run `go test ./...` from `starter/`. Read the three failures — each
+   placeholder currently does nothing (or returns a zero value).
+2. Implement `PrintCatalog(w io.Writer, books []Book)` with a **classic
+   C-style** `for` loop (`for i := 0; i < len(books); i++`) that prints
+   each book's title and copy count to `w`. The file doesn't import
+   `"fmt"` yet — add that line yourself.
+3. Implement `CountAvailable(books []Book) int` with a **while-style**
    `for` loop (a bare condition, no init or post statement) that counts
    how many books have `Copies > 0`.
-3. Implement `FindFirstAvailable(books []Book) (Book, bool)` with an
+4. Implement `FindFirstAvailable(books []Book) (Book, bool)` with an
    **infinite** `for {}` loop that scans until it finds a book with
    `Copies > 0`, then `break`s. Return the zero `Book` and `false` if the
    loop finishes without finding one.
-4. Run `go run ./cmd/librarian` from `starter/` and confirm the catalog
-   prints, the available count is right, and the first available book is
+5. Re-run `go test ./...` and confirm all three tests pass, then run `go
+   run ./cmd/librarian` from `starter/` and confirm the catalog prints,
+   the available count is right, and the first available book is
    correct.
 
 **Key Learning:** Go has one looping keyword. The classic, while-style,
@@ -43,52 +62,67 @@ they're the same `for` with different pieces of the header omitted.
 
 ## Exercise 2: Switches — grading fees and desk hours
 
-**Objective:** Use a conditionless `switch` and deliberate `fallthrough`.
+**Objective:** Use a conditionless `switch` and deliberate `fallthrough`
+— checked by a pre-written test that asserts Saturday and Sunday match.
 
 **Context:** `starter/internal/catalog/decisions.go` has two `TODO`
-functions.
+functions. `TestLateFeeTier` and `TestDeskSchedule` in
+`decisions_test.go` are already written and already failing.
 
 **Tasks:**
 
-1. Implement `LateFeeTier(daysLate int) string` using a `switch` with
+1. Run `go test ./...`. `TestLateFeeTier` and `TestDeskSchedule` fail —
+   read the table of cases each one checks, including the boundary days.
+2. Implement `LateFeeTier(daysLate int) string` using a `switch` with
    **no condition** (`switch { case daysLate >= 30: ... }`). Return
    `"suspended"` for 30+ days late, `"warning"` for 7-29 days, `"none"`
    for under 7.
-2. Implement `DeskSchedule(day int) string` using `switch day { ... }`
+3. Implement `DeskSchedule(day int) string` using `switch day { ... }`
    where `day` is 1 (Monday) through 7 (Sunday). Group Monday-Friday
    together as `"open 9am-6pm"`. Give Saturday its own case that ends
    with a deliberate `fallthrough` into Sunday's case, so both return
    `"open 10am-2pm only"`.
-3. Run the program. Confirm day 6 and day 7 produce the same string via
-   the fallthrough, then comment out the `fallthrough` line and confirm
-   day 6 now returns something else (or nothing useful) instead.
+4. Re-run `go test ./...` and confirm both tests pass, then run the
+   program and confirm day 6 and day 7 produce the same string via the
+   fallthrough. Comment out the `fallthrough` line, re-run `go test
+   ./...`, and confirm `TestDeskSchedule` now fails and tells you exactly
+   why — Saturday and Sunday no longer match. Put it back before moving
+   on.
 
 **Key Learning:** Go's `switch` doesn't fall through by default — the
 opposite of C, Java, and JavaScript. Every case is an implicit break;
 `fallthrough` is how you opt back into the old behavior, one case at a
-time, explicitly.
+time, explicitly. The pre-written test asserts the fallthrough directly,
+so breaking it produces an obvious, named failure instead of something
+you'd only catch by eyeballing output.
 
 ---
 
 ## Exercise 3: Struct value vs. pointer semantics
 
 **Objective:** Prove to yourself when a function can and can't mutate the
-struct you passed it.
+struct you passed it — verified by a pre-written test that checks both
+sides: the copy that changed, and the original that didn't.
 
 **Context:** `starter/internal/catalog/structs.go` has two `TODO`
-functions, both operating on `Book`.
+functions, both operating on `Book`. `TestResetCopies` and
+`TestResetCopiesPtr` in `structs_test.go` are already written and already
+failing.
 
 **Tasks:**
 
-1. Implement `ResetCopies(b Book) Book` — takes a `Book` **by value**,
+1. Run `go test ./...`. `TestResetCopies` fails on two fronts at once —
+   read it closely: it checks that the *returned* copy has `Copies == 0`
+   **and** that the *original* `Book` you passed in is unchanged.
+2. Implement `ResetCopies(b Book) Book` — takes a `Book` **by value**,
    sets `Copies` to `0` on its local copy, and returns it.
-2. Implement `ResetCopiesPtr(b *Book)` — takes a `*Book`, and sets
+3. Implement `ResetCopiesPtr(b *Book)` — takes a `*Book`, and sets
    `Copies` to `0` **through the pointer**, with no return value needed.
-3. In `cmd/librarian/main.go`, call `ResetCopies(book)` on a book from
-   your catalog and print `book.Copies` afterward — confirm it's
-   unchanged.
-4. Call `ResetCopiesPtr(&book)` on the same book and print `book.Copies`
-   again — confirm it's now `0`.
+4. Re-run `go test ./...` and confirm both tests pass. Then, in
+   `cmd/librarian/main.go`, run the program and read the two printed
+   lines — `ResetCopies` leaves `book.Copies` unchanged, `ResetCopiesPtr`
+   sets it to `0` — the same distinction the test just checked, now
+   visible in the real program.
 
 **Key Learning:** Passing a struct to a function passes a copy, exactly
 like an `int` — the function can only mutate the original if you pass a
@@ -105,8 +139,8 @@ find the exact line that stops it from happening.
 
 **Context:** `cmd/librarian/main.go` has a `TODO` block under `// --
 Exercise 4 --`. You'll build a waitlist scenario from scratch here, not
-in the `catalog` package — this one's about observing behavior, not
-returning a value.
+in the `catalog` package — this one's about observing behavior in printed
+output, not returning a checkable value, so it has no pre-written test.
 
 **Tasks:**
 
@@ -139,7 +173,9 @@ bug is intermittent in real code.
 "counted, zero" from "never seen."
 
 **Context:** Another `TODO` block in `cmd/librarian/main.go`, under `//
--- Exercise 5 --`.
+-- Exercise 5 --`. Like Exercise 4, this is about observing printed
+output rather than returning a checkable value, so there's no pre-written
+test here either.
 
 **Tasks:**
 
@@ -166,7 +202,8 @@ only reliable way to tell "never written" from "written, and it's zero."
 "whatever order you don't understand yet" — it's genuinely randomized.
 
 **Context:** A final `TODO` block in `cmd/librarian/main.go`, under `//
--- Exercise 6 --`.
+-- Exercise 6 --`. Randomized order isn't something a single test run
+could pin down as "correct," so this one stays purely observational too.
 
 **Tasks:**
 
@@ -181,54 +218,6 @@ no code can accidentally depend on an order that was never promised —
 unlike Python 3.7+ dicts or Java's `LinkedHashMap`, which are
 insertion-ordered. If your code needs a stable order, track it
 separately (e.g. a slice of keys) — the map itself won't give you one.
-
----
-
-## Exercise 7: Prove it with a test
-
-**Objective:** Extend the testing habit from Topic 2 to this lab's real
-code — a conditionless `switch` with `fallthrough`, and value vs. pointer
-struct semantics.
-
-**Context:** `starter/internal/catalog/` has no test files yet. You
-implemented `LateFeeTier` and `DeskSchedule` in Exercise 2, and
-`ResetCopies`/`ResetCopiesPtr` in Exercise 3 — now write the tests the
-same way Topic 2's lecture and Exercise 7 did for `divide`: a `_test.go`
-file, `TestX(t *testing.T)` functions, no framework.
-
-**Tasks:**
-
-1. Create `starter/internal/catalog/decisions_test.go`, `package
-   catalog`, importing `testing`. Write `TestLateFeeTier` covering at
-   least the boundary days — one just under 7, one at exactly 7, one just
-   under 30, one at exactly 30 — asserting the exact tier string each
-   time.
-2. In the same file, write `TestDeskSchedule` covering a weekday, and
-   both Saturday (`6`) and Sunday (`7`) — assert Saturday and Sunday
-   return the *same* string, which is only true because of the
-   `fallthrough` you wrote in Exercise 2.
-3. Create `starter/internal/catalog/structs_test.go`, same package and
-   import. Write `TestResetCopies` that calls `ResetCopies` on a `Book`
-   with `Copies` set to a nonzero number, and asserts **both** that the
-   returned copy has `Copies == 0` **and** that the original `Book` you
-   passed in is unchanged.
-4. In the same file, write `TestResetCopiesPtr` that calls
-   `ResetCopiesPtr` on a `&Book` and asserts the original now has
-   `Copies == 0`.
-5. Run `go test ./...` from `starter/`. All four tests should pass once
-   Exercises 2 and 3 are correctly implemented.
-6. Deliberately break the fallthrough — comment out the `fallthrough`
-   line in `DeskSchedule` — and re-run `go test ./...`. Confirm
-   `TestDeskSchedule` fails and tells you *why* (Saturday and Sunday no
-   longer match). Put the `fallthrough` back and confirm the test passes
-   again.
-
-**Key Learning:** In Exercise 2 you confirmed the fallthrough behavior by
-eyeballing printed output once. A test turns that same behavior into an
-explicit, checked contract — "Saturday and Sunday must always produce the
-same string" is no longer something you have to remember to re-check by
-hand every time this file changes; `go test` checks it for you, every
-time, forever.
 
 ---
 
@@ -248,6 +237,7 @@ By the end of this lab you should be able to:
   present key holding a zero value
 - Explain why Go map iteration order is randomized, and what to do if
   your code actually needs a stable order
-- Write `TestX(t *testing.T)` functions against this lab's own `switch`
-  and pointer-mutation code, and watch a deliberately broken
-  `fallthrough` get caught by the test instead of by eyeballing output
+- Read a failing test's output — including one that checks a
+  `fallthrough` or a by-value-vs-by-pointer distinction — to work out
+  what's still missing, and make it pass without needing to write a test
+  yourself yet

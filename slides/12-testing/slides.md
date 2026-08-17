@@ -54,32 +54,35 @@ speaker_note: |
 
 <!-- end_slide -->
 
-## This isn't your first test
+## You've read a lot of tests. Today you write one.
 
-You wrote your first `_test.go` file in **Topic 2**, testing `divide`.
-Every lab since then ended the same way.
+Every lab since **Topic 2** shipped with its `_test.go` file already
+written — you ran it, read a failure, and implemented until it went
+green. You've never written the test file yourself. That's the one
+genuinely new skill today adds.
 
 <!-- pause -->
 
 <!-- incremental_lists: true -->
 
-- **Topic 7**: a worker pool test that asserted the aggregate result, not execution order — because concurrent code can't be tested by asserting timing
-- **Topic 8**: a service tested against a fake repository, built in ten lines, with zero framework involved — dependency injection's actual payoff
-- **Topic 10**: an HTTP handler tested with `httptest`, no real server, no network call
-- **Topic 11**: a gRPC method called directly, because it's just a Go method with `context.Context` first
+- **Topic 7**: a worker pool test asserting the aggregate result, not execution order — already written for you
+- **Topic 8**: a service tested against a fake repository, built in ten lines, zero framework involved — already written for you
+- **Topic 10**: an HTTP handler tested with `httptest`, no real server, no network call — already written for you
+- **Topic 11**: a gRPC method called directly, because it's just a Go method with `context.Context` first — already written for you
 
 <!-- incremental_lists: false -->
 
-**Today doesn't introduce testing. It formalizes a habit you already have** — table-driven cases, panic testing, coverage, benchmarking.
+**The vocabulary isn't new — table-driven cases, `t.Run`, coverage, benchmarking build on tests you've already read and passed. Holding the pen is what's new.**
 
 <!--
 speaker_note: |
-  This is the reframe for the whole topic: resist any temptation to
-  present today's material as "now let's learn testing." They've been
-  doing it for ten topics. Today gives the habit sharper tools -
-  t.Run, coverage percentages, benchmarks - not a new skill from zero.
-  If the room has been diligent about the "prove it with a test"
-  exercises, name specific things you remember them building.
+  This is the reframe for the whole topic: don't undersell what they
+  already know, but don't overclaim it either. They've read a
+  `_test.go` file and watched `go test` go red-to-green in every lab
+  since Topic 2 - so the shape of a Go test, t.Errorf, table structure
+  by example, none of that is a cold start. What's genuinely new is
+  writing the file themselves for the first time. Name specific labs
+  you remember them working through if it helps ground the callback.
 -->
 
 <!-- end_slide -->
@@ -463,7 +466,7 @@ number moves.
 4. **Table-driven tests are just a slice of structs and a `for` loop** — `t.Run` gives per-case reporting and `-run` targeting
 5. **Panic testing uses `defer`/`recover` by hand** — the same primitives from Topics 2 and 5
 6. **Coverage and benchmarking are first-class, built into `go test`** — no separate JaCoCo/coverage.py/JMH equivalent
-7. **None of this was new today** — you'd already written tests in ten straight topics; this session gave the habit table-driven cases, coverage, and benchmarks on top of what you had
+7. **Writing the test is what's new today** — you'd already read and passed a pre-written test in every lab since Topic 2; this session hands you the pen, plus table-driven cases, coverage, and benchmarks
 
 <!-- end_slide -->
 
@@ -504,7 +507,7 @@ speaker_note: |
 - Go's `testing` package and `go test` command need no separate setup — ever
 - Table-driven tests turn a JUnit/pytest framework feature into ordinary Go you already knew
 - Coverage and benchmarking are first-class parts of the same tool, not add-ons
-- The habit itself started back in Topic 2 — today just gave it sharper tools
+- You've read and passed a pre-written test in every lab since Topic 2 — today's the first time you wrote one yourself
 
 <!-- incremental_lists: false -->
 

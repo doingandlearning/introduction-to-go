@@ -1,0 +1,7 @@
+# One URL per line. Blank lines and lines starting with # are ignored.
+# For the `go run` verification step only — the tests in this lab never
+# touch the real internet, so this file's not needed to pass anything.
+https://go.dev
+https://httpbin.org/status/200
+https://httpbin.org/status/404
+https://this-domain-should-not-resolve.invalid

@@ -2,8 +2,8 @@
 
 Working doc for continuing the test-pattern conversion started in Lab 2.
 Point a fresh session at this file plus `labs/02-core-language-features/`
-(the finished template) and `labs/03-flow-control-and-data-structures/`
-(next up).
+and `labs/03-flow-control-and-data-structures/` (both finished, second
+template) and `labs/04-object-oriented-programming/` (next up).
 
 ## The decision (confirmed with Kevin)
 
@@ -17,8 +17,8 @@ fail, implement until it's green.
 
 ## Scope
 
-- **Converted:** Topic 2 slides (`slides/02-core-language-features/slides.md`), Lab 2 (`labs/02-core-language-features/`) — this is the template.
-- **Still to do:** Labs 3, 4, 5, 6, 7, 8, 9, 10, 11.
+- **Converted:** Topic 2 slides (`slides/02-core-language-features/slides.md`), Lab 2 (`labs/02-core-language-features/`) — the template. Lab 3 (`labs/03-flow-control-and-data-structures/`) — done this session, see notes below.
+- **Still to do:** Labs 4, 5, 6, 7, 8, 9, 10, 11.
 - **Do not touch:** Lab 12 (Testing) — students learn to *write* tests here for the first time, on purpose, via a different pattern (production code finished, `t.Skip` test stubs to fill in). Lab 13 (Docker) — no unit-testable code, exercises are about Dockerfiles/compose/WSL.
 
 ## The pattern, exactly (from Lab 2)
@@ -128,3 +128,46 @@ checks above, then stop and report status rather than batching several
 labs silently — this conversion has already turned up one real bug
 (Lab 2's unused import) that only showed up once a human actually ran
 `go test`, so keep the loop tight.
+
+## Lab 3 — done this session, notes for the pattern going forward
+
+Lab 3 had two wrinkles Lab 2 didn't, worth knowing before Lab 4:
+
+- **Exercise 1 (loops) had zero tests before this session** — the old
+  lab's trailing "prove it with a test" exercise only ever covered
+  Exercises 2 and 3 (switches, struct semantics). Per the "every
+  implementation exercise" rule, Exercise 1 got a brand-new
+  `loops_test.go` (`TestPrintCatalog`, `TestCountAvailable`,
+  `TestFindFirstAvailable`) even though nothing in the old lab tested it.
+  Don't assume the old "prove it with a test" exercise's scope is the
+  full set of exercises that need tests — check every implement-a-function
+  exercise independently.
+- **`PrintCatalog` printed straight to stdout via `fmt.Printf`** — same
+  gotcha as Lab 2's `cmd/*/main.go` functions. Refactored to
+  `PrintCatalog(w io.Writer, books []Book)` using `fmt.Fprintf`, updated
+  `main()` to pass `os.Stdout` (which required adding an `"os"` import to
+  `main.go` — that file isn't a TODO placeholder itself, so pre-importing
+  it there is fine, unlike the mathutils.go-style gotcha).
+- **Exercises 4, 5, 6 stayed manual, deliberately** — all three are
+  inline `TODO` blocks directly in `cmd/librarian/main.go`'s `main()`,
+  not separate functions with signatures. Ex4 (slice-aliasing bug) and
+  Ex6 (map iteration order) are pure observation, same as Lab 2's
+  `auditReport`/`closeZonesBuggy` precedent. Ex5 (word-frequency +
+  comma-ok) does have real logic (building a map) that could in
+  principle be extracted into a testable `catalog` function, but doing
+  so wasn't requested and would mean inventing a new function signature
+  not in the original lab — left manual to avoid scope creep. Revisit
+  this call if Kevin wants Ex5 test-covered too; extracting a
+  `catalog.CountCheckouts(log string) map[string]int` would be the
+  natural approach, following the same io.Writer-refactor spirit.
+- Old Exercise 7 ("Prove it with a test") deleted; its assertions were
+  already word-for-word what `solution/internal/catalog/decisions_test.go`
+  and `structs_test.go` had, so they were reused directly as the
+  pre-written starter tests rather than rewritten from scratch.
+
+All Lab 3 changes were pushed to
+`/Users/kevincunningham/code/neueda/go-programming-reup/course/labs/03-flow-control-and-data-structures/`
+on Kevin's machine via the device bridge. Static checks (brace/paren
+balance, import-usage scan) all passed — as always, no Go toolchain in
+this sandbox, so ask Kevin to run `go build ./... && go test ./...` in
+both `starter/` and `solution/` before treating Lab 3 as live.

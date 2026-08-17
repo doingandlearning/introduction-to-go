@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"example.com/librarian/internal/catalog"
@@ -17,7 +18,7 @@ func main() {
 
 	// -- Exercise 1: loops --
 	fmt.Println("-- catalog --")
-	catalog.PrintCatalog(books)
+	catalog.PrintCatalog(os.Stdout, books)
 
 	fmt.Println("available:", catalog.CountAvailable(books))
 

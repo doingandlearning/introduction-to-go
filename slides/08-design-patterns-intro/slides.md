@@ -194,13 +194,29 @@ like Java's `private` constructor plus a static factory.
 
 ## Singleton: pros and cons
 
-| Pros | Cons |
-|---|---|
-| Guarantees a single instance without ceremony, via package scope | Global mutable state is harder to test — no easy way to swap in a fake config without touching global state or adding an interface anyway |
-| `sync.Once` solves the concurrent-init race correctly in a few lines | Hides a dependency inside function bodies — a function calling `GetConfig()` internally isn't honest about depending on config, versus taking it as a parameter |
-| Cheap to reach for — often just a package-level `var` | Can make tests interfere with each other if the singleton holds mutable state across test runs |
+<!-- column_layout: [1, 1] --> 
+
+<!-- column: 0 -->
+
+# Pros
+
+- Guarantees a single instance without ceremony, via package scope 
+- `sync.Once` solves the concurrent-init race correctly in a few lines 
+- Cheap to reach for — often just a package-level `var` 
 
 <!-- pause -->
+
+<!-- column: 1 -->
+
+# Cons
+
+- Global mutable state is harder to test — no easy way to swap in a fake config without touching global state or adding an interface anyway 
+- Hides a dependency inside function bodies — a function calling `GetConfig()` internally isn't honest about depending on config, versus taking it as a parameter 
+- Can make tests interfere with each other if the singleton holds mutable state across test runs 
+
+<!-- pause -->
+
+<!-- reset_layout -->
 
 **Type in chat: for a CLI tool that runs once and exits, is the
 global-state downside even real? What changes for a long-running service
@@ -297,14 +313,27 @@ on that next.
 
 ## Handler/Service/Repository: pros and cons
 
-| Pros | Cons |
-|---|---|
-| Each layer is independently testable — fake the service in a handler test, fake the repository in a service test | For a genuinely small service, three layers can be more ceremony than the problem needs — a 40-line CRUD toy doesn't need this |
-| Business logic isn't tangled with HTTP parsing or SQL | Over-abstracting early is a real anti-pattern — an interface with exactly one implementation, forever, buys you nothing |
-| Clear place for new code to go as the service grows | Go culture leans "write the concrete version first, extract an interface when you have two implementations or a real testing need" — a different default from shops that interface everything up front |
+
+<!-- column_layout: [1,1] -->
+<!-- column: 0 -->
+# Pros
+
+- Each layer is independently testable — fake the service in a handler test, fake the repository in a service test 
+- Business logic isn't tangled with HTTP parsing or SQL 
+- Clear place for new code to go as the service grows 
+<!-- column: 1 -->
 
 <!-- pause -->
 
+# Cons
+
+- For a genuinely small service, three layers can be more ceremony than the problem needs — a 40-line CRUD toy doesn't need this 
+- Over-abstracting early is a real anti-pattern — an interface with exactly one implementation, forever, buys you nothing 
+- Go culture leans "write the concrete version first, extract an interface when you have two implementations or a real testing need" — a different default from shops that interface everything up front 
+
+<!-- pause -->
+
+<!-- reset_layout -->
 **Type in chat: for a service with one endpoint and one table, do you
 reach for all three layers on day one, or add them when the second
 endpoint shows up?**
@@ -398,14 +427,28 @@ svc := NewUserService(fakeRepo{users: canned})
 
 ## Dependency injection: pros and cons
 
-| Pros | Cons |
-|---|---|
-| Explicit — read a constructor signature and you see exactly what depends on what, nothing injected by magic or reflection | At real scale, wiring a large dependency graph by hand in `main` gets verbose |
-| Fast — no container startup, no reflection overhead | That verbosity is exactly the itch tools like `wire` scratch — code-generating the wiring, still with no runtime reflection |
-| No framework lock-in — it's just passing a value that satisfies an interface | Manual DI is a real tradeoff, not strictly better in every case — it's a decision, not a free lunch |
+<!-- column_layout: [1,1] -->
+
+<!-- column: 0 -->
+# Pros
+
+- Explicit — read a constructor signature and you see exactly what depends on what, nothing injected by magic or reflection 
+- Fast — no container startup, no reflection overhead 
+- No framework lock-in — it's just passing a value that satisfies an interface 
+<!-- column: 1 -->
 
 <!-- pause -->
 
+# Cons
+
+
+- At real scale, wiring a large dependency graph by hand in `main` gets verbose 
+- That verbosity is exactly the itch tools like `wire` scratch — code-generating the wiring, still with no runtime reflection 
+- Manual DI is a real tradeoff, not strictly better in every case — it's a decision, not a free lunch 
+
+<!-- pause -->
+
+<!-- reset_layout -->
 **Type in chat: for a service with 3 dependencies vs. one with 30, does
 manual wiring in `main` still feel "explicit," or does it start feeling
 like boilerplate?**

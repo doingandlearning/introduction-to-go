@@ -125,6 +125,63 @@ which JSON key maps to which field.
 
 <!-- end_slide -->
 
+## Two shapes of the same job
+
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+
+**Streaming — HTTP already gave you a reader/writer**
+
+```go
+json.NewEncoder(w).Encode(item)
+
+json.NewDecoder(r.Body).
+    Decode(&item)
+```
+
+Reads or writes straight to/from an
+`io.Reader`/`io.Writer` — no
+intermediate `[]byte` in your hands.
+
+<!-- column: 1 -->
+
+**Marshal/Unmarshal — everywhere else**
+
+```go
+data, err := json.Marshal(item)
+
+var item Item
+err := json.Unmarshal(data, &item)
+```
+
+The general-purpose form: a Go
+value in, a `[]byte` out (or the
+reverse) — same as Python's
+`json.dumps`/`loads` or JS's
+`JSON.stringify`/`parse`.
+
+<!-- reset_layout -->
+
+<!-- pause -->
+
+**Same struct tags, same reflection underneath — the only difference is
+what's on the other end.** Reach for `Marshal`/`Unmarshal` the moment
+there's no `io.Reader`/`Writer` already in scope: logging a struct,
+writing a fixture to a test, building a request body in a test file
+(exactly what the pre-written tests in this lab's `handler_test.go` do).
+
+<!--
+speaker_note: |
+  Worth naming explicitly that they've already seen json.Marshal once
+  without it being explained - it's sitting unremarked in this lab's
+  own handler_test.go, building the JSON body a test POSTs in. Point
+  that out directly rather than assuming they noticed and understood it
+  while reading the pre-written test.
+-->
+
+<!-- end_slide -->
+
 ## The struct tag footgun
 
 **The compiler does not check struct tags for correctness. At all.**
