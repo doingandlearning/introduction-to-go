@@ -4,6 +4,15 @@ sub_title: Go Programming — Topic 1
 author: Kevin Cunningham
 ---
 
+## Accessing Resources
+
+- Navigate to https://learn.neuda.com
+- Enter the course code `181003`
+- Create a username or login
+- The registration code is `EVBYWI` 
+
+<!-- end_slide -->
+
 ## Opening scenario
 
 You've written a small script in Python. It works perfectly on your laptop.
