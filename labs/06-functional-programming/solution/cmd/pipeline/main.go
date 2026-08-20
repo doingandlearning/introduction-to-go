@@ -44,7 +44,7 @@ func exerciseTwoFilter() {
 
 	drinkNames := []string{"tea", "latte", "cola", "espresso", "chai"}
 	longNames := orders.Filter(drinkNames, func(s string) bool { return len(s) > 3 })
-	fmt.Println("long names:", longNames) // [latte espresso chai]
+	fmt.Println("long names:", longNames) // [latte cola espresso chai]
 	fmt.Println()
 }
 
@@ -89,6 +89,6 @@ func exerciseFiveMethodValue() {
 	inv := orders.Invoice{Subtotal: 12.50, TaxRate: 0.08}
 	fmt.Printf("invoice: %+v\n", inv)
 
-	getTotal := inv.Total // method value - no call, no parens
+	getTotal := inv.Total             // method value - no call, no parens
 	fmt.Println("total:", getTotal()) // 13.5, no argument needed
 }

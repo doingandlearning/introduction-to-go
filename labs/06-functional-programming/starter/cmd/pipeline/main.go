@@ -45,7 +45,7 @@ func exerciseTwoFilter() {
 
 	drinkNames := []string{"tea", "latte", "cola", "espresso", "chai"}
 	longNames := orders.Filter(drinkNames, func(s string) bool { return len(s) > 3 })
-	fmt.Println("long names:", longNames) // want [latte espresso chai]
+	fmt.Println("long names:", longNames) // want [latte cola espresso chai]
 	fmt.Println()
 }
 

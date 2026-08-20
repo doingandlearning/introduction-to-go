@@ -3,14 +3,19 @@
 Starter code is in `starter/` (TODOs to fill in). A complete reference is
 in `solution/` — don't look until you've had a go.
 
+**Every exercise below ships with its test already written**, sitting in
+`starter/internal/orders/orders_test.go`. Run `go test ./...` from
+`starter/` right now, before you change anything — every test fails.
+That's the starting line, not a bug. Your job in each exercise is to
+make the named test pass, not to write a new one; writing tests
+yourself is Topic 12's job.
+
 Both directories contain the same shape: a `cmd/pipeline` package (the
-program entry point, already wired to walk through the first five
-exercises) and an `internal/orders` package (where most of the
-implementation gaps live, including the test from Exercise 6). By the
-end, you'll have written a closure, a pair of generic helpers, a
+program entry point, already wired to walk through all five exercises)
+and an `internal/orders` package (where the implementation gaps live).
+By the end, you'll have written a closure, a pair of generic helpers, a
 functional-options constructor, and a method value — the full toolkit
-from the lecture, applied to one small coffee shop — and a test that
-proves one of them actually works.
+from the lecture, applied to one small coffee shop.
 
 ---
 
@@ -22,17 +27,21 @@ global state.
 **Context:** `internal/orders/orders.go` has a `TODO` on
 `NewOrderCounter`. It should return a closure that starts at 0 and
 increments by 1 on every call — the same shape as `makeCounter` from
-the lecture.
+the lecture. `TestNewOrderCounter` in `orders_test.go` is already
+written and already failing.
 
 **Tasks:**
 
-1. Implement `NewOrderCounter() func() int` in `internal/orders/orders.go`.
-2. Run `go run ./cmd/pipeline` from `starter/`. Exercise 1's output
+1. Run `go test ./...` from `starter/`. Read `TestNewOrderCounter`'s
+   failure — it builds two counters and interleaves calls to both,
+   and the placeholder (which always returns 0) satisfies neither
+   sequence.
+2. Implement `NewOrderCounter() func() int` in `internal/orders/orders.go`.
+3. Re-run `go test ./...` and confirm `TestNewOrderCounter` passes.
+4. Run `go run ./cmd/pipeline` from `starter/`. Exercise 1's output
    creates two counters, `till1` and `till2`, and interleaves calls to
-   both.
-3. Confirm the sequences printed for `till1` and `till2` are each their
-   own independent 1, 2, 3, … — not a single shared count split between
-   them.
+   both — confirm the sequences printed for each are their own
+   independent 1, 2, 3, … , not a single shared count split between them.
 
 **Key Learning:** Each call to a function that returns a closure
 produces a brand-new copy of whatever variables that closure captures.
@@ -47,18 +56,21 @@ both were built by the exact same code.
 across unrelated types.
 
 **Context:** `Filter[T any]` has a `TODO` stub that currently returns
-every item unfiltered.
+every item unfiltered. `TestFilter` in `orders_test.go` is already
+written and already failing.
 
 **Tasks:**
 
-1. Implement `Filter[T any](items []T, predicate func(T) bool) []T` in
-   `internal/orders/orders.go`, using a `for` loop and `append`.
-2. Run `go run ./cmd/pipeline` again. Exercise 2 calls your `Filter`
+1. Run `go test ./...`. Read `TestFilter`'s failure — it calls `Filter`
    once on a `[]int` (keeping even numbers) and once on a `[]string`
-   (keeping drink names longer than 3 characters) — same function,
-   different type parameters.
-3. Confirm both filtered lists match the `// want` comments next to
-   each call in `cmd/pipeline/main.go`.
+   (keeping drink names longer than 3 characters), and the placeholder
+   returns every element in both cases, filtered or not.
+2. Implement `Filter[T any](items []T, predicate func(T) bool) []T` in
+   `internal/orders/orders.go`, using a `for` loop and `append`.
+3. Re-run `go test ./...` and confirm `TestFilter` passes.
+4. Run `go run ./cmd/pipeline` again and confirm both filtered lists
+   match the `// want` comments next to each call in
+   `cmd/pipeline/main.go`.
 
 **Key Learning:** `T any` means the compiler generates the right
 version of `Filter` for whatever type you call it with. You did not
@@ -74,22 +86,30 @@ slice of one type into a slice of a completely different type.
 
 **Context:** `Drink` has a `PriceCents int` field and a `Dollars()
 float64` method — a derived value computed from the stored one. Both
-`Dollars` and `Map` have `TODO` stubs.
+`Dollars` and `Map` have `TODO` stubs. `TestDollars` and `TestMap` in
+`orders_test.go` are already written and already failing — `TestMap`
+calls `Map` with `Drink.Dollars` as the transform, so it exercises both
+functions at once.
 
 **Tasks:**
 
-1. Implement `Dollars()` on `Drink` — convert `PriceCents` to a
+1. Run `go test ./...`. Read `TestDollars`'s failure first — it checks
+   a single conversion, and the placeholder always returns `0`.
+2. Implement `Dollars()` on `Drink` — convert `PriceCents` to a
    `float64` and divide by 100. (Watch out for integer division: convert
    before you divide.)
-2. Implement `Map[T, U any](items []T, transform func(T) U) []U` using a
+3. Re-run `go test ./...` and confirm `TestDollars` passes. `TestMap`
+   is still failing — that's next.
+4. Implement `Map[T, U any](items []T, transform func(T) U) []U` using a
    `for` loop.
-3. Run `go run ./cmd/pipeline`. Exercise 3 calls `Map` with
+5. Re-run `go test ./...` and confirm `TestMap` passes too.
+6. Run `go run ./cmd/pipeline`. Exercise 3 calls `Map` with
    `orders.Drink.Dollars` — notice this passes the method itself, not a
    wrapping closure. This works because `Drink.Dollars` used this way is
    a *method expression*: Go turns it into an ordinary
    `func(Drink) float64`, exactly the shape `Map`'s `transform`
-   parameter wants.
-4. Confirm the printed prices match the `// want` comment.
+   parameter wants. Confirm the printed prices match the `// want`
+   comment.
 
 **Key Learning:** Generic helpers compose with methods, not just
 freestanding functions. `Type.Method` (no receiver instance) is a
@@ -107,27 +127,40 @@ every field left as a zero value by hand.
 **Context:** `CoffeeOrder` has three unexported fields (`size`,
 `extraShot`, `oatMilk`). `CoffeeOption`, `WithSize`, `WithExtraShot`,
 `WithOatMilk`, and `NewCoffeeOrder` all have `TODO` stubs that
-currently do nothing.
+currently do nothing. `TestNewCoffeeOrder` in `orders_test.go` is
+already written and already failing — it covers zero options, one
+option, and several stacked together.
 
 **Tasks:**
 
-1. Define `CoffeeOption` as `func(*CoffeeOrder)`.
-2. Implement `WithSize`, `WithExtraShot`, and `WithOatMilk`, each
+1. Run `go test ./...`. Read `TestNewCoffeeOrder`'s failure — with
+   everything still a no-op, even the "zero options" case comes back
+   with an empty `size`, not the `"medium"` default it's supposed to
+   have.
+2. Define `CoffeeOption` as `func(*CoffeeOrder)`.
+3. Implement `WithSize`, `WithExtraShot`, and `WithOatMilk`, each
    returning a `CoffeeOption` closure that sets the relevant field.
-3. Implement `NewCoffeeOrder(opts ...CoffeeOption) *CoffeeOrder` — set
+4. Implement `NewCoffeeOrder(opts ...CoffeeOption) *CoffeeOrder` — set
    defaults first (`size: "medium"`, `extraShot: false`, `oatMilk:
    false`), then loop over `opts` and apply each one.
-4. Run `go run ./cmd/pipeline`. Exercise 4 builds three orders: no
+5. Re-run `go test ./...` and confirm `TestNewCoffeeOrder` passes —
+   all three cases (zero options, one option, stacked options).
+6. Run `go run ./cmd/pipeline`. Exercise 4 builds three orders: no
    options, one option (`WithSize("large")`), and three stacked
-   (`WithSize`, `WithExtraShot`, `WithOatMilk` together).
-5. Confirm the "plain" order still shows the defaults untouched — that's
-   the part that has to work for the pattern to be worth using.
+   (`WithSize`, `WithExtraShot`, `WithOatMilk` together). Confirm the
+   "plain" order still shows the defaults untouched — that's the part
+   that has to work for the pattern to be worth using.
 
 **Key Learning:** This is the idiom that actually earns its keep in
 production Go. It replaces both a missing feature (constructor
 overloading) and another missing feature (default/named parameters)
 with one small piece of machinery: a variadic list of functions that
-each know how to adjust one setting.
+each know how to adjust one setting. `TestNewCoffeeOrder`'s "zero
+options" case is the one that matters most in practice — it's easy for
+a future edit to silently break the default while everyone's attention
+is on the new option being added, and that's exactly the case a
+pre-written test catches instantly, instead of a customer noticing
+their "plain" coffee arrived as a large.
 
 ---
 
@@ -136,18 +169,27 @@ each know how to adjust one setting.
 **Objective:** Assign a method to a variable without calling it, and
 confirm it still knows which instance it belongs to later.
 
-**Context:** `Invoice.Total()` is already implemented in
-`internal/orders/orders.go` by the time you reach this exercise (you'll
-have written it as part of getting the package to compile). The gap is
-in `cmd/pipeline/main.go` itself, marked with a `TODO`.
+**Context:** `Invoice.Total()` has a `TODO` stub in
+`internal/orders/orders.go` — you'll implement it as part of this
+exercise, not before. `TestInvoiceTotal` in `orders_test.go` is already
+written and already failing; it checks `Total()`'s own arithmetic and
+then does the same method-value assignment you're about to write in
+`main.go`, to prove the pattern actually works.
 
 **Tasks:**
 
-1. Open `cmd/pipeline/main.go` and find `exerciseFiveMethodValue`.
-2. Where the `TODO` is, assign `inv.Total` — **no parentheses, don't
+1. Run `go test ./...`. Read `TestInvoiceTotal`'s failure — both the
+   direct `inv.Total()` call and the method-value version come back `0`.
+2. Implement `Total()` on `Invoice` in `internal/orders/orders.go`:
+   `Subtotal` plus tax, i.e. `Subtotal * (1 + TaxRate)`.
+3. Re-run `go test ./...` and confirm `TestInvoiceTotal` passes —
+   that's the underlying logic done; the rest of this exercise is the
+   syntax for using it.
+4. Open `cmd/pipeline/main.go` and find `exerciseFiveMethodValue`.
+5. Where the `TODO` is, assign `inv.Total` — **no parentheses, don't
    call it** — to a variable named `getTotal`.
-3. Call `getTotal()` (now with parentheses) and print the result.
-4. Run `go run ./cmd/pipeline`. Confirm it prints `13.5`, and notice you
+6. Call `getTotal()` (now with parentheses) and print the result.
+7. Run `go run ./cmd/pipeline`. Confirm it prints `13.5`, and notice you
    never passed `inv` back in when you called `getTotal()` — it was
    already bound in.
 
@@ -156,51 +198,6 @@ assignment, the same way a closure captures a variable from its
 enclosing scope. `getTotal` is a plain `func() float64` from that point
 on — you can pass it around, store it, or hand it to another function
 that has never heard of `Invoice`.
-
----
-
-## Exercise 6: Prove it with a test
-
-**Objective:** Apply the `go test` mechanics you learned in Topic 2 to
-this topic's functional-options constructor — proving `NewCoffeeOrder`'s
-defaults survive when no options are passed, and that each option only
-touches the field it's responsible for.
-
-**Context:** `internal/orders/orders_test.go` has a `TestNewCoffeeOrder`
-function that currently just calls `t.Skip`. You already know the shape
-from Topic 2 — a `_test.go` file, a `TestX(t *testing.T)` function,
-`t.Errorf`/`t.Fatalf`, no framework required. This exercise doesn't
-teach anything new about *how* to write a test; it asks you to point
-that tool at `NewCoffeeOrder`.
-
-**Tasks:**
-
-1. Open `internal/orders/orders_test.go` and remove the `t.Skip` line
-   from `TestNewCoffeeOrder`.
-2. Build three `CoffeeOrder`s and assert on each:
-   - `NewCoffeeOrder()` with **zero options** — assert `Size() ==
-     "medium"`, `ExtraShot() == false`, `OatMilk() == false`.
-   - `NewCoffeeOrder(WithSize("large"))` with **one option** — assert
-     `Size() == "large"`, and that the other two fields are still at
-     their defaults.
-   - `NewCoffeeOrder(WithSize("small"), WithExtraShot(), WithOatMilk())`
-     with **options stacked** — assert all three fields reflect the
-     overrides.
-3. Run `go test ./...` from `starter/`. All three assertions inside
-   `TestNewCoffeeOrder` should pass.
-4. Now deliberately break it: in `NewCoffeeOrder`, temporarily change
-   the default `size` from `"medium"` to `"large"`. Run `go test ./...`
-   again and confirm your zero-options assertion fails, naming the
-   mismatch. Then put the default back and confirm the test passes
-   again.
-
-**Key Learning:** A test doesn't just prove the happy path once — it
-proves the defaults keep behaving correctly every time this code
-changes. The "zero options" case matters most for functional options:
-it's easy for a future edit to silently break the default while
-everyone's attention is on the new option being added, and that's
-exactly the case a test catches instantly, instead of a customer
-noticing their "plain" coffee arrived as a large.
 
 ---
 
@@ -218,6 +215,5 @@ By the end of this lab you should be able to:
   explain what problem it solves that Go has no other tool for
 - Assign a method to a variable without calling it, and predict that it
   still knows its receiver when called later
-- Write a test that proves a functional-options constructor's defaults
-  survive when no options are passed, and confirm it fails when they
-  don't
+- Read a failing test's output to work out what's still missing, and
+  make it pass — without needing to write a test yourself yet
