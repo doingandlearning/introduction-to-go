@@ -81,6 +81,8 @@ type Employee struct {
 }
 ```
 
+<!-- pause -->
+
 <!-- column: 1 -->
 
 ```go

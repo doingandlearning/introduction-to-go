@@ -26,6 +26,11 @@ func (i Item) TotalValue() float64 {
 	return float64(i.Quantity) * i.UnitCost
 }
 
+func (i *Item) SellItem() {
+	i.Quantity--
+	fmt.Printf("Sold one %s, %d remaining", i.Name, i.Quantity)
+}
+
 // ApplyDiscount has a POINTER receiver — it operates on the original
 // Item, so the mutation is visible to the caller after the call returns.
 func (i *Item) ApplyDiscount(pct float64) {
@@ -33,9 +38,16 @@ func (i *Item) ApplyDiscount(pct float64) {
 }
 
 func main() {
+
+	// var it Item
+	// it := Item{Name: "", Quantity: 0, UnitCost: 0}
+
 	it := Item{Name: "Widget", Quantity: 10, UnitCost: 5}
 	fmt.Printf("%s: qty=%d unitCost=%.2f total=%.2f\n",
 		it.Name, it.Quantity, it.UnitCost, it.TotalValue())
+
+	it.SellItem()
+	fmt.Println(it)
 
 	// Go auto-takes the address of it here: it.ApplyDiscount(10) is
 	// shorthand for (&it).ApplyDiscount(10). Works because it is a

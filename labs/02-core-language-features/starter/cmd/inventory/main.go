@@ -113,6 +113,7 @@ func closeZonesBuggy() {
 func closeZonesFixed(w io.Writer) {
 	fmt.Fprintln(w, "--- closing zones (fixed) ---")
 	// TODO: replace this placeholder.
+
 }
 
 // printItemFormats prints one Item with %v, %+v, %#v, and %T. A

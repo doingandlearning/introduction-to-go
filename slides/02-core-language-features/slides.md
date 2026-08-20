@@ -133,7 +133,7 @@ var p *int      // nil
 <!-- column: 1 -->
 
 ```go
-type Point struct{ X, Y int }
+type Point struct{ X, Y int}
 
 var pt Point
 // {0 0} — usable immediately,
@@ -673,7 +673,6 @@ same `package name` at the top.
 4. **No `enum` keyword**: `iota` inside a `const` block numbers a named type for you, but the compiler never restricts a variable to just those values
 5. **No function overloading**: rename, use an interface, or reach for generics later
 6. **No exceptions for ordinary errors**: multiple returns plus `if err != nil`, everywhere, on purpose
-7. **`defer` runs at function exit, LIFO**: arguments evaluate immediately, the call runs later
 8. **`fmt` generalizes past stdout**: `Sprintf`, `Errorf`, `Fprintf` against any `io.Writer`, and `Stringer` for custom formatting
 9. **A package is a directory**: same-package files share a namespace for free; imports work at package granularity
 10. **Every lab from here on starts red**: the test is already written in `starter/` — your job is to make it pass, not to write it; writing one yourself is Topic 12's job

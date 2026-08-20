@@ -6,7 +6,7 @@ author: Kevin Cunningham
 
 ## Accessing Resources
 
-- Navigate to https://learn.neuda.com
+- Navigate to https://learn.neueda.com
 - Enter the course code `181003`
 - Create a username or login
 - The registration code is `EVBYWI` 

@@ -7,6 +7,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"os"
 
 	"example.com/library-frontdesk/internal/library"
 )
@@ -31,9 +33,9 @@ func main() {
 	// library.WelcomeAll(greeters)
 
 	// --- Exercise 4: any + type switch ---
-	logCheckIn(42)
-	logCheckIn("Priya")
-	logCheckIn(3.14)
+	logCheckIn(os.Stdout, 42)
+	logCheckIn(os.Stdout, "Priya")
+	logCheckIn(os.Stdout, 3.14)
 
 	// --- Exercise 5: the nil-interface gotcha ---
 	err := library.CheckOut("The Go Programming Language", 0, 5)
@@ -41,12 +43,16 @@ func main() {
 }
 
 // logCheckIn accepts any front-desk log event and reports what kind it
-// got. int is treated as a visitor count, string as a patron name.
+// got. int is treated as a visitor count, string as a patron name. It
+// writes to w instead of stdout directly — same reason as Topic 2's
+// `fmt` doesn't just print to the terminal" slide: an io.Writer
+// parameter is what makes this testable with a bytes.Buffer instead of
+// spawning the real program.
 //
 // TODO (Exercise 4): implement this with a type switch
 // (switch v := x.(type)) handling at least int, string, and a default
 // case.
-func logCheckIn(x any) {
+func logCheckIn(w io.Writer, x any) {
 	// TODO: replace this placeholder with a real type switch.
-	fmt.Println("check-in event:", x)
+	fmt.Fprintln(w, "check-in event:", x)
 }

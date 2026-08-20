@@ -19,17 +19,27 @@ least twice.
 
 1. From `starter/`, run `go run ./cmd/greeter`. It should compile — but the
    output won't be right yet, because `greeting.go` isn't finished.
-2. Run `go build ./... && ./greeter` (or `greeter.exe` on Windows). Same
-   output, but now you have a standalone binary sitting in the directory.
-   Delete it once you've confirmed it runs.
-3. Run `go install ./cmd/greeter`. Find the binary it produced — check
+2. Run `go build ./cmd/greeter` — **name the package explicitly, not
+   `./...`**. `starter/` has two packages (`cmd/greeter` and
+   `internal/greeting`), and `go build ./...` matches both — when `build`
+   compiles more than one package it discards the result instead of
+   writing a binary, silently and without error. Naming a single main
+   package is what actually produces a file.
+3. Run the binary it just built: `./greeter` on macOS/Linux,
+   `.\greeter.exe` on Windows (PowerShell's native path separator —
+   `./greeter.exe` usually works too, but `.\` is the safer, idiomatic
+   form for a native `.exe`, not just a PowerShell command). Delete it
+   once you've confirmed it runs.
+4. Run `go install ./cmd/greeter`. Find the binary it produced — check
    `$HOME/go/bin` (or `%USERPROFILE%\go\bin` on Windows). Run it from
    there, outside the project directory entirely.
 
 **Key Learning:** `go run`, `go build`, and `go install` all compile your
 code — the difference is what they do with the result afterward, not
 whether they "interpret" it. There's no such thing as Go interpreting a
-file.
+file. And `go build ./...` is for *checking* a whole module compiles —
+not for producing a binary, unless it happens to match exactly one main
+package. Name the package explicitly when you actually want the file.
 
 ---
 

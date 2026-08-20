@@ -55,6 +55,8 @@ type Vehicle struct {
 }
 ```
 
+<!-- pause -->  
+
 <!-- column: 1 -->
 
 ```go
@@ -260,6 +262,9 @@ error.
 func NewItem(name string, qty int, cost float64) (*Item, error) {
     if qty < 0 {
         return nil, fmt.Errorf("quantity cannot be negative, got %d", qty)
+    }
+    if name == "" {
+        name = "Unknown"
     }
     return &Item{Name: name, Quantity: qty, UnitCost: cost}, nil
 }

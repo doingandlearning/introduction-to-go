@@ -41,7 +41,7 @@ labs/     Hands-on exercises (one lab per topic, plus a capstone)
 
 ### `slides/`
 
-A `slides.md` file per topic, written in Presenterm markdown. 
+A `slides.md` file per topic, written in Presenterm markdown.
 
 ### `code/`
 
@@ -83,19 +83,21 @@ To work through the course you'll need:
 ## Course outline
 
 ### Topic 1 — Go Essentials
+
 - Getting Started with Go
 - Writing and Running Go Programs
 - Using an IDE
 
 ### Topic 2 — Core Language Features
+
 - Getting Started
 - Variables and Types
 - Functions
-- Deferred Function Execution
 - Formatted I/O — a Primer on the `fmt` Package
 - Organizing Packages
 
 ### Topic 3 — Flow Control & Data Structures
+
 - Looping
 - Decision Making
 - Pointers
@@ -106,28 +108,34 @@ To work through the course you'll need:
 - Maps
 
 ### Topic 4 — Object-Oriented Programming
+
 - Introduction to Object-Oriented Programming
 - Defining and Using Classes in Go
 - Initialization
 
 ### Topic 5 — Inheritance and Interfaces
+
 - Getting Started with Inheritance
 - Inheritance in Go
 - Interfaces
 - Polymorphism
 
 ### Topic 6 — Functional Programming
+
 - Functional Programming
 - Higher Order Functions
 - Additional Techniques
 
 ### Topic 7 — Concurrency
+
+- Deferred Function Execution
 - Getting Started with Concurrency
 - Channels
 - Channel Techniques
 - Buffered Channels
 
 ### Topic 8 — Introduction to Design Patterns
+
 - Introduction to Design Patterns and Evaluating Trade-offs
 - Example Design Pattern: Singleton
 - Implementing a Thread-Safe Singleton
@@ -136,6 +144,7 @@ To work through the course you'll need:
 - Dependency Injection Fundamentals
 
 ### Topic 9 — Additional Design Patterns
+
 - Strategy Pattern
 - Abstract Factory Pattern
 - Decorator Pattern
@@ -143,6 +152,7 @@ To work through the course you'll need:
 - Dependency Injection in Practice
 
 ### Topic 10 — REST Services
+
 - Overview of REST Services
 - Creating a REST Service in Go
 - Structuring Services with Handler/Service/Repository
@@ -151,6 +161,7 @@ To work through the course you'll need:
 - Running Services Locally with Docker Compose
 
 ### Topic 11 — gRPC and Protocol Buffers
+
 - Overview of gRPC and Protocol Buffers
 - The Benefits of Protocol Buffers
 - Getting gRPC and Protocol Buffers
@@ -158,6 +169,7 @@ To work through the course you'll need:
 - A Closer Look at Service Methods
 
 ### Topic 12 — Testing
+
 - Setting the Scene
 - Getting Started with Go Tests
 - Testing for Panics
@@ -166,6 +178,7 @@ To work through the course you'll need:
 - Benchmarking
 
 ### Topic 13 — Docker & Deployment
+
 - Containerizing Go Applications
 - Multi-Stage Docker Builds
 - `scratch` vs. `distroless` Base Images

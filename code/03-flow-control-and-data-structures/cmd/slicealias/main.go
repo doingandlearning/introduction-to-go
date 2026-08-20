@@ -18,8 +18,12 @@ func main() {
 
 	// A sub-slice does NOT copy elements 1 and 2. It's a new small struct
 	// (pointer + length + capacity) pointing at original's backing array.
-	view := original[1:3]
+	// Rather than view := original[1:3]
+	view := make([]int, 3-1) // len 2, matching original[1:3]
+	copy(view, original[1:3])
 	fmt.Println("step 1: view           =", view, "len", len(view), "cap", cap(view))
+
+	// copy & make
 
 	// Mutate through the view. Nobody wrote to original directly.
 	view[0] = 99
@@ -42,6 +46,7 @@ func main() {
 	view = append(view, 200, 300, 400)
 	fmt.Println("step 4: view = append(view, 200, 300, 400)")
 	fmt.Println("        view           =", view, "len", len(view), "cap", cap(view), "<- cap jumped: reallocated")
+	fmt.Println("        original           =", original, "len", len(original), "cap", cap(original), "<- cap jumped: reallocated")
 
 	view[0] = -1
 	fmt.Println("step 5: view[0] = -1")

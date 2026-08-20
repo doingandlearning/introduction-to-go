@@ -1,7 +1,5 @@
 package library
 
-import "fmt"
-
 // Greeter is satisfied by anything that can greet a visitor - a human,
 // a machine, a mascot in a costume, whatever. No shared base type
 // required, no declared relationship needed.
@@ -33,8 +31,14 @@ type Mascot struct {
 
 // WelcomeAll prints a greeting for every Greeter in the slice. It has no
 // idea what concrete types it's holding, and doesn't need to.
-func WelcomeAll(greeters []Greeter) {
-	for _, g := range greeters {
-		fmt.Println(g.Greet())
-	}
-}
+//
+// TODO (Exercise 3): uncomment this once Greeter has a Greet() method
+// above — as written it won't compile yet, since g.Greet() isn't part
+// of Greeter's method set until you add it. You'll need to add the
+// "fmt" import back to the top of this file too.
+//
+// func WelcomeAll(greeters []Greeter) {
+// 	for _, g := range greeters {
+// 		fmt.Println(g.Greet())
+// 	}
+// }

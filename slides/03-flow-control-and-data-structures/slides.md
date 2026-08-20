@@ -45,12 +45,18 @@ Go has exactly one looping keyword: `for`. No `while`, no `do-while`, no
 for i := 0; i < 5; i++ {
     fmt.Println(i)
 }
+```
 
+<!-- pause -->
+
+```go
 // while-style
 for condition {
     // ...
 }
 ```
+
+<!-- pause -->
 
 <!-- column: 1 -->
 
@@ -61,7 +67,11 @@ for {
         break
     }
 }
+```
 
+<!-- pause -->
+
+```go
 // range-based
 for i, v := range someSlice {
     // ...
@@ -113,6 +123,8 @@ if score >= 90 {
     grade = "C"
 }
 ```
+
+<!-- pause -->
 
 <!-- column: 1 -->
 
@@ -326,6 +338,14 @@ fmt.Println(original) // [1 99 3 4 5]
 ```
 
 Nobody wrote `original[1] = 99`. It happened anyway, through `view`.
+
+```go
+type Slice {
+    pointer memory_reference
+    length int
+    capacity int
+}
+```
 
 <!--
 speaker_note: |
