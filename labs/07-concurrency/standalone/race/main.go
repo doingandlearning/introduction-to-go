@@ -1,4 +1,4 @@
-// Exercise 6: INTENTIONALLY BROKEN — run to observe, then fix it in the
+// Exercise 7: INTENTIONALLY BROKEN — run to observe, then fix it in the
 // sibling files main_mutex.go and main_channel.go (task 3 and 4).
 //
 // Two dispatcher goroutines both increment a shared deliveryCount a

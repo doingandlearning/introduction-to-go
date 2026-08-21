@@ -1,4 +1,4 @@
-// Exercise 3: same scenario as Exercise 2, but over a BUFFERED channel
+// Exercise 4: same scenario as Exercise 3, but over a BUFFERED channel
 // (capacity 3), so the dispatcher can get ahead of the courier.
 package main
 

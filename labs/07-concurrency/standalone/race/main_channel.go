@@ -1,4 +1,4 @@
-// This file is a REFERENCE for Exercise 6, task 4 — same build-tag setup
+// This file is a REFERENCE for Exercise 7, task 4 — same build-tag setup
 // as main_mutex.go: excluded from the default build so main.go's package
 // still compiles standalone. Copy it out to try it for real.
 //

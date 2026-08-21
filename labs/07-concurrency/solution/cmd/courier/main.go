@@ -1,4 +1,4 @@
-// Exercise 2: producer/consumer over an UNBUFFERED channel. A dispatcher
+// Exercise 3: producer/consumer over an UNBUFFERED channel. A dispatcher
 // goroutine sends 5 order IDs one at a time; main receives and "delivers"
 // each one.
 package main

@@ -1,4 +1,4 @@
-// Exercise 9 (optional/stretch): the same worker pool from Exercise 7,
+// Exercise 9 (optional/stretch): the same worker pool from Exercise 8,
 // extended with two more concurrency primitives: a lock-free counter from
 // sync/atomic, and a time.Ticker that throttles how fast jobs reach the
 // workers.

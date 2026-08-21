@@ -1,4 +1,4 @@
-// This file is a REFERENCE for Exercise 6, task 3 — it is not part of the
+// This file is a REFERENCE for Exercise 7, task 3 — it is not part of the
 // buildable `standalone/race` program (it lives in package main alongside
 // main.go, which already defines main() and deliveryCount, so this file
 // is kept excluded from the build via the "ignore" build tag below).

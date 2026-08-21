@@ -1,4 +1,4 @@
-// Exercise 4: select with a timeout. Dispatch waits on a status update
+// Exercise 5: select with a timeout. Dispatch waits on a status update
 // from either of two couriers, but gives up after 2 seconds.
 package main
 
@@ -13,7 +13,7 @@ func main() {
 
 	fmt.Println("waiting for a status update from courier A or B...")
 
-	// TODO(Exercise 4): write a select with:
+	// TODO(Exercise 5): write a select with:
 	//   - a case receiving from courierA
 	//   - a case receiving from courierB
 	//   - a case on time.After(2 * time.Second) that prints

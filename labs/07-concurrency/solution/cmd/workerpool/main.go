@@ -1,4 +1,4 @@
-// Exercise 7 (main lab exercise): a fixed pool of 3 dispatcher goroutines
+// Exercise 8 (main lab exercise): a fixed pool of 3 dispatcher goroutines
 // pulling delivery jobs off a shared jobs channel and pushing completion
 // records onto a shared results channel.
 package main
