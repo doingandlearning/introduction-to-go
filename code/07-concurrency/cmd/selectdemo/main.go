@@ -34,17 +34,16 @@ func main() {
 	go fetch("warehouse-A", ch1)
 	go fetch("warehouse-B", ch2)
 
-	for ch1 != nil || ch2 != nil {
+	exit := false
+	for !exit {
 		select {
 		case msg := <-ch1:
 			fmt.Println("got:", msg)
-			ch1 = nil // retire this case so select stops considering it
 		case msg := <-ch2:
 			fmt.Println("got:", msg)
-			ch2 = nil
 		case <-time.After(2 * time.Second):
 			fmt.Println("timed out waiting for the rest")
-			return
+			exit = true
 		}
 	}
 	fmt.Println("both warehouses reported in")

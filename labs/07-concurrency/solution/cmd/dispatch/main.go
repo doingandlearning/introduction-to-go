@@ -19,7 +19,7 @@ func main() {
 		go func(id int) {
 			defer wg.Done()
 			checkIn(id)
-		}(i)
+		}(i) // IIFE - immediately invoked function expression
 	}
 
 	wg.Wait()

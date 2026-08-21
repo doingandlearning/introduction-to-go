@@ -7,11 +7,21 @@ package main
 
 import "fmt"
 
+func FilterStrings(items []string, predicate func(string) bool) []string {
+	var result []string
+	for _, item := range items {
+		if predicate(item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
 // Filter returns the elements of items for which predicate returns true.
 // T any means this compiles once and works for every element type - no
 // interface{} and no type assertions anywhere in this function.
-func Filter[T any](items []T, predicate func(T) bool) []T {
-	var result []T
+func Filter[ItemType any](items []ItemType, predicate func(ItemType) bool) []ItemType {
+	var result []ItemType
 	for _, item := range items {
 		if predicate(item) {
 			result = append(result, item)
@@ -40,10 +50,14 @@ func (d Drink) Dollars() float64 {
 	return float64(d.PriceCents) / 100
 }
 
+func isEven(n int) bool {
+	return n%2 == 0
+}
+
 func main() {
 	// Filter over ints.
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8}
-	evens := Filter(numbers, func(n int) bool { return n%2 == 0 })
+	evens := Filter(numbers, isEven)
 	fmt.Println("evens:", evens)
 
 	// Same Filter function, completely different element type.
@@ -64,4 +78,36 @@ func main() {
 	}
 	prices := Map(menu, Drink.Dollars)
 	fmt.Println("prices:", prices)
+}
+
+type NumberType interface {
+	int | int8 | int16 | int32 | int64 |
+		uint | uint8 | uint16 | uint32 | uint64 |
+		float32 | float64
+}
+
+type Stack[T NumberType] struct {
+	items []T
+}
+
+func (s *Stack[T]) Push(item T) {
+	s.items = append(s.items, item)
+}
+
+func (s *Stack[T]) Pop() (T, bool) {
+	if len(s.items) == 0 {
+		var zero T
+		return zero, false
+	}
+	item := s.items[len(s.items)-1]
+	s.items = s.items[:len(s.items)-1]
+	return item, true
+}
+
+func useStack() {
+	ints := Stack[int]{}
+	ints.Push(1)
+	ints.Push(2)
+
+	stringList := Stack[string]{}
 }

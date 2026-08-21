@@ -29,9 +29,8 @@ func CheckOut(book string, currentlyHeld, maxBooksAllowed int) error {
 // left nil, returning it as an error stores the pair (*CheckoutError,
 // nil), and err == nil is false because the type half is non-nil.
 func CheckOutBuggy(book string, currentlyHeld, maxBooksAllowed int) error {
-	var problem *CheckoutError = nil
 	if currentlyHeld >= maxBooksAllowed {
-		problem = &CheckoutError{Book: book}
+		return &CheckoutError{Book: book}
 	}
-	return problem
+	return nil
 }

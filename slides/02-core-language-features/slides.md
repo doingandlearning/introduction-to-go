@@ -297,9 +297,8 @@ situations — a programming bug, not "the user typed bad input."
 
 <!-- pause -->
 
-One more piece of function-execution behavior before we look at the
-failing test already waiting for this code: what actually runs when a
-function returns — including an early return, or a panic.
+That's the core error-handling idiom — next, the failing test already
+waiting for this code.
 
 <!--
 speaker_note: |
@@ -307,71 +306,6 @@ speaker_note: |
   honest answer: it trades brevity for the compiler forcing you to look
   at every failure point instead of letting one catch block at the top
   of a call stack silently swallow five different failure modes.
--->
-
-<!-- end_slide -->
-
-## `defer`: run this when the function returns
-
-```go
-func readConfig() error {
-	f, err := os.Open("config.json")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	return nil
-}
-```
-
-<!-- pause -->
-
-`defer` schedules the call to run when the surrounding function returns —
-however it returns: normal return, early return, or even a panic.
-
-**Real-world version:** clipping your car key to your house key hook the
-moment you walk in the door, so future-you physically cannot leave the
-house without both. You set up the guarantee right next to the point
-where you created the thing that needs cleaning up — not in a `finally`
-block somewhere far below.
-
-<!-- end_slide -->
-
-## The gotcha: arguments evaluate now, the call runs later
-
-```go
-for i := 0; i < 3; i++ {
-	defer fmt.Println(i)
-}
-// prints: 2, 1, 0
-```
-
-<!-- pause -->
-
-Two rules collide here:
-
-<!-- incremental_lists: true -->
-
-- `defer`'s **arguments** are evaluated immediately, when the `defer` statement runs
-- the **call itself** executes later, in LIFO order (last deferred, first run)
-
-<!-- incremental_lists: false -->
-
-**Demo:** run this loop, then predict — before running it — what a `defer func(n int) { fmt.Println(n) }(i)` version would print instead.
-
-That's the last new language rule before we look at the failing test
-already sitting in this topic's lab.
-
-<!--
-speaker_note: |
-  Walk through why it's 2, 1, 0 rather than 0, 1, 2: each defer captures
-  the value of i at the moment defer ran (2, then 1, then 0 as the loop
-  counted down through its final iterations), and LIFO unwinds them in
-  reverse of the order they were deferred. The func(n int){...}(i) fix
-  works because passing i as an argument copies it at defer-time, same
-  as the plain fmt.Println(i) case - the real gotcha shows up when
-  people close over the loop variable in a closure instead.
 -->
 
 <!-- end_slide -->
@@ -710,7 +644,6 @@ speaker_note: |
 
 - Types convert explicitly, never silently
 - Errors are values, checked immediately, not caught after the fact
-- `defer` guarantees cleanup runs, in LIFO order, right next to the resource that needs it
 - Every lab from here on starts with a failing test — implement until `go test ./...` passes; writing tests yourself is Topic 12's job
 - `fmt` is a small toolkit that works across strings, errors, and any `io.Writer`
 

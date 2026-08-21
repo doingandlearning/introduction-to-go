@@ -47,6 +47,78 @@ because this is what makes Go, Go.
 
 <!-- jump_to_middle -->
 
+Deferred Function Execution
+===
+
+<!-- end_slide -->
+
+## `defer`: run this when the function returns
+
+```go
+func readConfig() error {
+	f, err := os.Open("config.json")
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	return nil
+}
+```
+
+<!-- pause -->
+
+`defer` schedules the call to run when the surrounding function returns —
+however it returns: normal return, early return, or even a panic.
+
+**Real-world version:** clipping your car key to your house key hook the
+moment you walk in the door, so future-you physically cannot leave the
+house without both. You set up the guarantee right next to the point
+where you created the thing that needs cleaning up — not in a `finally`
+block somewhere far below.
+
+<!-- end_slide -->
+
+## The gotcha: arguments evaluate now, the call runs later
+
+```go
+for i := 0; i < 3; i++ {
+	defer fmt.Println(i)
+}
+// prints: 2, 1, 0
+```
+
+<!-- pause -->
+
+Two rules collide here:
+
+<!-- incremental_lists: true -->
+
+- `defer`'s **arguments** are evaluated immediately, when the `defer` statement runs
+- the **call itself** executes later, in LIFO order (last deferred, first run)
+
+<!-- incremental_lists: false -->
+
+**Demo:** run this loop, then predict — before running it — what a `defer func(n int) { fmt.Println(n) }(i)` version would print instead.
+
+Keep that LIFO habit in mind — in a few minutes you'll see `defer
+wg.Done()` inside a goroutine, and it's the exact same rule at work.
+
+<!--
+speaker_note: |
+  Walk through why it's 2, 1, 0 rather than 0, 1, 2: each defer captures
+  the value of i at the moment defer ran (2, then 1, then 0 as the loop
+  counted down through its final iterations), and LIFO unwinds them in
+  reverse of the order they were deferred. The func(n int){...}(i) fix
+  works because passing i as an argument copies it at defer-time, same
+  as the plain fmt.Println(i) case - the real gotcha shows up when
+  people close over the loop variable in a closure instead.
+-->
+
+<!-- end_slide -->
+
+<!-- jump_to_middle -->
+
 Goroutines
 ===
 
@@ -219,10 +291,47 @@ speaker_note: |
 
 <!-- end_slide -->
 
+## Where we'll pick this up
+
+<!-- incremental_lists: true -->
+
+- `defer`: cleanup that runs when a function returns, LIFO order, arguments captured immediately
+- Goroutines: near-free, `go`-keyword launched, scheduled by the Go runtime — no `async`/`await`
+- `sync.WaitGroup`: `Add`/`Done`/`Wait` to know when a batch has finished — `defer wg.Done()` is the standard pairing
+
+<!-- incremental_lists: false -->
+
+**That's everything for today.** Next session we pick up exactly here and
+look at how goroutines actually pass data to each other: channels.
+
+<!-- end_slide -->
+
+<!-- jump_to_middle -->
+
+End of today's session
+===
+
+<!-- end_slide -->
+
 <!-- jump_to_middle -->
 
 Channels
 ===
+
+<!-- end_slide -->
+
+## Quick recap: last session
+
+<!-- incremental_lists: true -->
+
+- `go someFunc()` launches a goroutine — cheap, runtime-scheduled, no `async`/`await` marker in the signature
+- `defer` schedules a call for when the enclosing function returns, LIFO order, arguments evaluated immediately at defer-time
+- `sync.WaitGroup` (`Add`/`Done`/`Wait`) is how you know a batch of goroutines has finished — `defer wg.Done()` ties the two together
+
+<!-- incremental_lists: false -->
+
+None of that told you **how goroutines hand data to each other** —
+that's channels, starting now.
 
 <!-- end_slide -->
 
@@ -767,13 +876,14 @@ every worker has finished before that happens.
 <!-- incremental_lists: true -->
 
 1. **Goroutines are cheap**: KB-sized stacks, scheduled by the Go runtime, not the OS — thousands are normal
-2. **No async/await**: concurrency is marked only by `go` and channel operations, not the function signature
-3. **Channels are the idiomatic handoff**: unbuffered = synchronous rendezvous, buffered = slack up to capacity
-4. **`select` waits on multiple channels**: `default` makes it non-blocking, `time.After` gives you timeouts
-5. **Closing is a signal, not cleanup**: close from the sender, detect with comma-ok, never close twice
-6. **Two failure modes to know by sight**: whole-program deadlock crashes loudly; races need `-race` to see
-7. **Mutexes are still valid**: "share memory by communicating" is the default, not a law; `RWMutex` splits readers from writers when reads dominate
-8. **Test outcomes, not order**: a deterministic concurrency test asserts the aggregate result — a count, a sum, a full result set — never which goroutine ran first
+2. **`defer` guarantees cleanup runs**, in LIFO order, right next to the resource that needs it
+3. **No async/await**: concurrency is marked only by `go` and channel operations, not the function signature
+4. **Channels are the idiomatic handoff**: unbuffered = synchronous rendezvous, buffered = slack up to capacity
+5. **`select` waits on multiple channels**: `default` makes it non-blocking, `time.After` gives you timeouts
+6. **Closing is a signal, not cleanup**: close from the sender, detect with comma-ok, never close twice
+7. **Two failure modes to know by sight**: whole-program deadlock crashes loudly; races need `-race` to see
+8. **Mutexes are still valid**: "share memory by communicating" is the default, not a law; `RWMutex` splits readers from writers when reads dominate
+9. **Test outcomes, not order**: a deterministic concurrency test asserts the aggregate result — a count, a sum, a full result set — never which goroutine ran first
 
 <!-- end_slide -->
 
@@ -810,6 +920,7 @@ speaker_note: |
 <!-- incremental_lists: true -->
 
 - Goroutines are near-free to launch and scheduled by the Go runtime, not the OS
+- `defer` runs cleanup at function-return time, LIFO order, right next to the resource that needs it
 - Channels, not shared variables, are the idiomatic way goroutines coordinate
 - Deadlocks and races are both real, and Go gives you concrete tools to catch each
 - Testing concurrent code follows the same rule: assert the deterministic aggregate — never a specific goroutine execution order
