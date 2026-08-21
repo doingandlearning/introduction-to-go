@@ -1,32 +1,51 @@
-// Command selectdemo shows select waiting on two input channels plus a
-// time.After timeout case. Neither input channel is ever sent on, so the
-// timeout case is guaranteed to fire.
+// Command selectdemo shows select waiting on two independent input
+// channels plus a time.After timeout case. Two goroutines "fetch" from
+// warehouse-A and warehouse-B after a random delay; select reports each
+// result as it arrives (in whichever order they actually finish), and
+// gives up if either result takes longer than the timeout.
 //
 //	go run ./cmd/selectdemo
 //
-// Expected output, after roughly a 2 second pause:
+// Expected output (order and exact delays vary each run):
 //
-//	waiting on ch1, ch2, or a 2s timeout...
-//	timed out waiting for ch1/ch2
+//	got: warehouse-A responded after 245ms
+//	got: warehouse-B responded after 763ms
+//	both warehouses reported in
 package main
 
 import (
 	"fmt"
+	"math/rand/v2"
 	"time"
 )
 
+// fetch simulates calling a real, independent data source (an API, a
+// database, whatever) that takes a random amount of time to respond.
+func fetch(source string, ch chan<- string) {
+	delay := time.Duration(rand.IntN(1500)) * time.Millisecond
+	time.Sleep(delay)
+	ch <- fmt.Sprintf("%s responded after %v", source, delay)
+}
+
 func main() {
-	ch1 := make(chan int)
-	ch2 := make(chan int)
+	ch1 := make(chan string)
+	ch2 := make(chan string)
 
-	fmt.Println("waiting on ch1, ch2, or a 2s timeout...")
+	go fetch("warehouse-A", ch1)
+	go fetch("warehouse-B", ch2)
 
-	select {
-	case v := <-ch1:
-		fmt.Println("from ch1:", v)
-	case v := <-ch2:
-		fmt.Println("from ch2:", v)
-	case <-time.After(2 * time.Second):
-		fmt.Println("timed out waiting for ch1/ch2")
+	for ch1 != nil || ch2 != nil {
+		select {
+		case msg := <-ch1:
+			fmt.Println("got:", msg)
+			ch1 = nil // retire this case so select stops considering it
+		case msg := <-ch2:
+			fmt.Println("got:", msg)
+			ch2 = nil
+		case <-time.After(2 * time.Second):
+			fmt.Println("timed out waiting for the rest")
+			return
+		}
 	}
+	fmt.Println("both warehouses reported in")
 }
