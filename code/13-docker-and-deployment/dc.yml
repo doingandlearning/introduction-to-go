@@ -1,0 +1,22 @@
+services:
+  proxy:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    networks:
+      - frontend
+
+  api:
+    build: .
+    networks:
+      - frontend
+      - backend
+
+  db:
+    image: postgres:16
+    networks:
+      - backend
+
+networks:
+  frontend:
+  backend:

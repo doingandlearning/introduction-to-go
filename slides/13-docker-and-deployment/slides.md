@@ -31,8 +31,9 @@ The client scoping call was explicit: **you use WSL and docker-compose
 for local development, and you want real Docker coverage** — not a
 five-minute aside.
 
-Topic 10 already showed you *just enough* docker-compose to run the REST
-service locally. This topic is the fuller treatment:
+Topic 10 never touched Docker at all, so there's no assumed prior
+exposure to build on here — this topic starts from zero and covers all
+of it:
 
 <!-- incremental_lists: true -->
 
@@ -42,6 +43,117 @@ service locally. This topic is the fuller treatment:
 - Deploying and containerizing what you've built across this course
 
 <!-- incremental_lists: false -->
+
+<!--
+speaker_note: |
+  Say this plainly rather than assuming it: nobody in the room has
+  built or run a Docker image in this course before today, not even
+  the "just enough to get a REST service up" version. Today is real
+  first contact - pace the next section accordingly.
+-->
+
+<!-- end_slide -->
+
+<!-- jump_to_middle -->
+
+Docker, from zero
+===
+
+<!--
+speaker_note: |
+  This section exists because Topic 10 never touched Docker at all -
+  don't assume ANY prior exposure walking in here, not even "I've seen
+  a docker-compose.yml before." Treat this as a genuine first contact,
+  not a recap.
+-->
+
+<!-- end_slide -->
+
+## An image is a recipe, a container is what you get when you follow it
+
+<!-- column_layout: [1, 1] -->
+
+<!-- column: 0 -->
+
+**Image**
+
+A read-only bundle: a filesystem plus metadata about what to run.
+Built once, with `docker build`. Doesn't change once built.
+
+<!-- column: 1 -->
+
+**Container**
+
+A running (or stopped) instance of an image — the same relationship a
+class has to an object. `docker run` starts one.
+
+<!-- reset_layout -->
+
+**One image, run many times, is many independent containers** — same
+starting filesystem each time, no shared state between them unless you
+explicitly wire it up (a volume, a network — both coming up shortly).
+
+<!-- end_slide -->
+
+## The Dockerfile: instructions for building the image
+
+A `Dockerfile` is a plain text file, one instruction per line, read top
+to bottom:
+
+<!-- incremental_lists: true -->
+
+- `FROM` — start from an existing image (an OS, a language runtime, or something minimal)
+- `WORKDIR` — set the working directory inside the image for everything that follows
+- `COPY` — copy files from your machine into the image
+- `RUN` — execute a command *while building* the image (installing something, compiling something)
+- `ENTRYPOINT` — the command that runs when a container starts from this image
+
+<!-- incremental_lists: false -->
+
+Each instruction adds a new layer on top of the last. `docker build`
+runs them in order and produces the final image.
+
+<!-- end_slide -->
+
+## A first Dockerfile for a Go service
+
+```dockerfile
+FROM golang:1.22
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux go build -o /server ./cmd/server
+EXPOSE 8080
+ENTRYPOINT ["/server"]
+```
+
+Start from an image with the Go toolchain already installed, copy the
+source in, compile it, run the result.
+
+<!-- pause -->
+
+**Demo:**
+
+```
+docker build -t docker-demo .
+docker run -p 8080:8080 docker-demo
+```
+
+```
+curl localhost:8080/healthz
+curl localhost:8080/items
+```
+
+<!--
+speaker_note: |
+  Run this live end to end - build, run, curl - before saying anything
+  about image size. Let it just work first. The size problem lands
+  better once they've seen the happy path succeed, and it's exactly
+  the Dockerfile this topic keeps coming back to over the next few
+  slides ("the naive, single-stage Dockerfile") - it's not a throwaway
+  example, name it as the same one again when you get there.
+-->
 
 <!-- end_slide -->
 
@@ -105,9 +217,12 @@ speaker_note: |
 
 ## This has to be earned, not assumed
 
-Go doesn't hand you a tiny image for free. `docker build` with a naive,
-single-stage Dockerfile ships the entire Go toolchain — compiler, module
-cache, everything — in your final image too.
+Go doesn't hand you a tiny image for free. The Dockerfile you just
+built and ran — a naive, single-stage one — ships the entire Go
+toolchain in the final image too: compiler, module cache, everything.
+
+**Demo:** run `docker images` against the image you just built and look
+at its size.
 
 <!-- pause -->
 
@@ -240,12 +355,87 @@ speaker_note: |
 
 <!-- jump_to_middle -->
 
+docker-compose, from zero
+===
+
+<!-- end_slide -->
+
+## Why docker-compose exists
+
+A real service rarely runs alone — it needs a database, maybe a cache,
+maybe another internal service. Running each with its own `docker run`
+command, remembering every flag, every time, doesn't scale past "one
+container."
+
+<!-- pause -->
+
+`docker-compose` describes a whole stack — every service, its image or
+build context, its ports, its environment — in one YAML file, and
+brings the whole thing up or down with one command.
+
+<!-- end_slide -->
+
+## A first docker-compose.yml
+
+```yaml
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: appdb
+```
+
+Two services: `api` (built from the `Dockerfile` in this directory) and
+`db` (pulled ready-made from Docker Hub — no Dockerfile needed for
+something that already ships an official image).
+
+<!-- pause -->
+
+**Demo:**
+
+```
+docker-compose up --build
+```
+
+```
+curl localhost:8080/healthz
+```
+
+```
+docker-compose down
+```
+
+<!--
+speaker_note: |
+  Keep this first pass deliberately simple - no healthcheck, no named
+  volume yet. The point is just "one file, one command, two containers
+  come up talking to each other." The production-shaped version with
+  healthchecks and a persistent volume is the very next section, framed
+  explicitly as an upgrade from this one - not as new, unrelated
+  content.
+-->
+
+<!-- end_slide -->
+
+<!-- jump_to_middle -->
+
 docker-compose for local Go development
 ===
 
 <!-- end_slide -->
 
 ## The shape of it
+
+Same two services as the simple version you just saw — now with the
+pieces a real dev setup actually needs: an explicit `DATABASE_URL`, a
+named volume so data survives a restart, and a healthcheck gating when
+`api` is allowed to start.
 
 ```yaml
 services:
@@ -388,7 +578,7 @@ speaker_note: |
 
 <!-- jump_to_middle -->
 
-WSL — the client's actual ask
+WSL 
 ===
 
 <!--

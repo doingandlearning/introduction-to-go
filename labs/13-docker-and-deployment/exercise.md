@@ -14,6 +14,32 @@ looks nothing like a line-ending bug when it happens.
 
 ---
 
+## Exercise 0: Build and run the starter Dockerfile as-is
+
+**Objective:** Get a working `docker build` / `docker run` / `curl`
+loop going before changing anything — confirm the baseline works, and
+have its image size on hand to compare against once you rewrite it.
+
+**Context:** `starter/Dockerfile` is a plain, single-stage Dockerfile:
+`FROM golang:1.22`, copy the source in, `go build`, `ENTRYPOINT`. It
+builds and runs correctly exactly as it is.
+
+**Tasks:**
+
+1. Build it: `docker build -t docker-lab-naive .`
+2. Run it: `docker run -p 8080:8080 docker-lab-naive`
+3. Confirm `curl localhost:8080/healthz` and `curl localhost:8080/items`
+   both respond correctly.
+4. Run `docker images docker-lab-naive` and note the size — you'll
+   compare Exercise 1's multi-stage rewrite against this number.
+
+**Key Learning:** This Dockerfile genuinely works — nothing about it is
+broken. The problem Exercise 1 fixes isn't "does it run," it's "what's
+in the image it produces," which is exactly why the size number here
+matters more than it might seem to on its own.
+
+---
+
 ## Exercise 1: Write a real multi-stage Dockerfile
 
 **Objective:** Turn the naive, single-stage starter Dockerfile into the
@@ -34,7 +60,7 @@ multi-stage pattern from lecture.
 4. Confirm `curl localhost:8080/healthz` and `curl localhost:8080/items`
    both respond correctly.
 5. Compare `docker images` output for your multi-stage build against
-   the original single-stage version. Note the size difference.
+   `docker-lab-naive` from Exercise 0. Note the size difference.
 
 **Key Learning:** The builder stage's size doesn't matter — it never
 ships. Only what the final `FROM` starts with, plus whatever you `COPY`
@@ -181,6 +207,8 @@ crosses between Windows and Linux editing environments.
 
 By the end of this lab you should be able to:
 
+- Build, run, and hit a Go service in a plain Docker container using
+  nothing but `docker build`, `docker run`, and `curl`
 - Write a multi-stage Dockerfile that compiles in one stage and ships
   only the binary in a small final stage
 - Explain concretely why `scratch` needs its CA bundle copied in by hand
