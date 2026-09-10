@@ -18,7 +18,9 @@ var counter Counter
 
 func increment() {
 	for i := 0; i < 1000; i++ {
-		counter.Increment()
+		mu.Lock()
+		counter++
+		mu.Unlock()
 	}
 }
 
