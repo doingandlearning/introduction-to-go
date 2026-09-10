@@ -24,7 +24,7 @@ import (
 // Item — flip the json tag on Name between "name" and "geust" to run the
 // footgun demo. Nothing else in this file needs to change.
 type Item struct {
-	Name     string `json:"name"` // <- change to `json:"geust"` for the demo
+	Name     string `json:"geust"` // <- change to `json:"geust"` for the demo
 	Quantity int    `json:"quantity"`
 }
 

@@ -14,6 +14,10 @@ run, break, and restart without touching the layered app.
 - **recover-middleware** — panic in one handler, `/ping` still answers
   right after. Header comment explains the optional "without recover"
   contrast run.
+- **nested-json** — one struct showing three JSON-nesting shapes
+  together: a named nested field (real nesting), an embedded/anonymous
+  struct (fields flatten/promote instead of nesting — the gotcha), and a
+  slice of structs (JSON array of objects).
 
 Each is run individually from the topic's module root:
 
@@ -22,6 +26,7 @@ go run ./cmd/minimal-ping
 go run ./cmd/routing
 go run ./cmd/struct-tag-footgun
 go run ./cmd/recover-middleware
+go run ./cmd/nested-json
 ```
 
 Only one at a time — they all bind `:8080`.

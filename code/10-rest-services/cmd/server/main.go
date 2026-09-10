@@ -29,10 +29,28 @@ func main() {
 
 	mux.HandleFunc("POST /items", h.Create)
 	mux.HandleFunc("GET /items", h.List)
-	mux.HandleFunc("GET /items/{id}", h.Get)
+	mux.HandleFunc("GET /items/{id}", h.Get) //  /items/1234
 	mux.HandleFunc("PUT /items/{id}", h.Update)
 	mux.HandleFunc("DELETE /items/{id}", h.Delete)
 
 	log.Println("listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", handler.Logging(mux)))
 }
+
+// mux.HandleFunc("GET /items/{path...}", func(w http.ResponseWriter, r *http.Request) {
+//     path := r.PathValue("path")
+//     segments := strings.Split(path, "/")
+
+//     switch segments[0] {
+//     case "special":
+//         fmt.Fprintln(w, "Special item")
+//     case "archive":
+//         if len(segments) > 1 {
+//             fmt.Fprintf(w, "Archived item ID: %s", segments[1])
+//         } else {
+//             fmt.Fprintln(w, "Archive root")
+//         }
+//     default:
+//         fmt.Fprintf(w, "Unknown item path: %s", path)
+//     }
+// })

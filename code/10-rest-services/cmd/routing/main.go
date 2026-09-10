@@ -44,3 +44,15 @@ func main() {
 	log.Println("listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", mux))
 }
+
+type Name struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+type Owner struct {
+	Name []struct {
+		FirstName string `json:"first_name"`
+		LastName  string `json:"last_name"`
+	} `json:"name"`
+}
