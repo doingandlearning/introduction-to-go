@@ -1,24 +1,58 @@
 package billing
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 // A basic test: call the function, compare the result by hand. No
 // assertion library, no framework magic - just an if statement and a
 // call to t.Errorf when the values don't match.
 func TestTenPercentOff(t *testing.T) {
-	got := TenPercentOff(100)
-	want := 90.0
+	// Arrange - Given
+	price := float64(100)
+	want := float64(90.0)
+
+	// Act - When
+	got := TenPercentOff(price)
+
+	// Assert	- Then
+	// assert, expect()
 	if got != want {
-		t.Errorf("TenPercentOff(100) = %v, want %v", got, want)
+		t.Errorf("TenPercentOff(%v) = %v, want %v", price, got, want)
+		t.Error()
+	}
+
+	if got < 10 {
+		t.Error("TenPercentOff result is unexpectedly low:", got)
 	}
 }
 
 // A sanity-check test for the non-panicking branch of Divide.
 func TestDivide(t *testing.T) {
 	got := Divide(10, 2)
-	want := 5.0
+	want := float64(5.0)
 	if got != want {
 		t.Errorf("Divide(10, 2) = %v, want %v", got, want)
+	}
+}
+
+func TestVarietyOfDivisions(t *testing.T) {
+	cases := []struct {
+		a, b, want float64
+	}{
+		{10, 2, 5},
+		{9, 3, 3},
+		{-8, 4, -2},
+		{8.2, 2, 4.1},
+	}
+	for _, tc := range cases {
+		t.Run(fmt.Sprintf("%v/%v", tc.a, tc.b), func(t *testing.T) {
+			got := Divide(tc.a, tc.b)
+			if got != tc.want {
+				t.Errorf("Divide(%v, %v) = %v, want %v", tc.a, tc.b, got, tc.want)
+			}
+		})
 	}
 }
 
@@ -46,6 +80,7 @@ func TestTierDiscount(t *testing.T) {
 	}{
 		{"zero price stays zero", 0, 0},
 		{"small price gets flat fiver floored at zero", 4, 0},
+		{"less than 50 gets 5 off", 10, 5},
 		{"mid price gets ten percent off", 60, 54},
 		{"large price gets twenty percent off", 150, 120},
 		{"boundary at fifty counts as mid tier", 50, 45},
@@ -72,11 +107,19 @@ func TestApplyDiscount(t *testing.T) {
 	}
 }
 
+func countToTwentyThousand() int {
+	count := 0
+	for i := 1; i <= 200000; i++ {
+		count++
+	}
+	return count
+}
+
 // BenchmarkTenPercentOff times TenPercentOff. go test decides how many
 // times to run the loop body (b.N), adjusting it across runs until the
 // timing is stable - that number is not something you choose.
 func BenchmarkTenPercentOff(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		TenPercentOff(100)
+		countToTwentyThousand()
 	}
 }
