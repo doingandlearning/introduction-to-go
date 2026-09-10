@@ -36,7 +36,7 @@ preview.
 
 <!-- pause -->
 
-Today: four more classic patterns, evaluated the same way — plus a much
+Now: four more classic patterns, evaluated the same way — plus a much
 harder dependency graph than "one service, one dependency."
 
 **Same lens as Topic 8, every time:** testability, coupling,
@@ -272,6 +272,13 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 }
 
 handler := LoggingMiddleware(AuthMiddleware(baseHandler))
+```
+
+```python
+@logging
+@auth
+def handle():
+    return "Response"
 ```
 
 <!-- pause -->

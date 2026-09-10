@@ -27,7 +27,7 @@ func main() {
 	go incrementer(incs, result) // single goroutine owns the counter
 
 	var wg sync.WaitGroup
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 3; i++ {
 		wg.Add(1)
 		go increment(&wg, incs)
 	}

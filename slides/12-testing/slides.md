@@ -385,8 +385,8 @@ speaker_note: |
 go test -cover ./...
 ```
 
-Prints a coverage percentage. No JaCoCo (Java), no `coverage.py`
-(Python) to install separately.
+Prints a coverage percentage. No `coverage.py` (Python), no JaCoCo
+(Java) to install separately.
 
 <!-- column: 1 -->
 

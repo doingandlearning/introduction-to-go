@@ -1,15 +1,30 @@
 package main
 
-import "sync"
+import (
+	"sync"
+)
 
 var mu sync.Mutex
-var counter int
+
+type Counter int
+
+func (c *Counter) Increment() {
+	mu.Lock()
+	defer mu.Unlock()
+	*c++
+}
+
+var counter Counter
 
 func increment() {
 	for i := 0; i < 1000; i++ {
-		mu.Lock()
-		counter++
-		mu.Unlock()
+		counter.Increment()
+	}
+}
+
+func wasteSomeTime() {
+	for i := 0; i < 1000000; i++ {
+		_ = i * i
 	}
 }
 
@@ -23,6 +38,8 @@ func main() {
 			increment()
 		}()
 	}
+
+	go wasteSomeTime()
 
 	wg.Wait()
 	println("final counter value:", counter)

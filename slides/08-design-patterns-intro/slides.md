@@ -311,7 +311,7 @@ on that next.
 
 <!-- end_slide -->
 
-## Handler/Service/Repository: pros and cons
+## Handler/[Service/Controller]/Repository: pros and cons
 
 
 <!-- column_layout: [1,1] -->
@@ -337,6 +337,9 @@ on that next.
 **Type in chat: for a service with one endpoint and one table, do you
 reach for all three layers on day one, or add them when the second
 endpoint shows up?**
+
+- YAGNI - You Ain't Gonna Need It
+- DRY - Don't Repeat Yourself
 
 <!--
 speaker_note: |

@@ -6,10 +6,10 @@ author: Kevin Cunningham
 
 ## Opening scenario
 
-Your Java team's Spring controller throws a `NotFoundException`. A global
-`@ExceptionHandler` catches it somewhere else entirely and turns it into
-a `404` automatically — the controller method itself never mentions a
-status code.
+Your Python team's FastAPI endpoint raises an `HTTPException`. A global
+`@app.exception_handler` catches it somewhere else entirely and turns it
+into a `404` automatically — the endpoint function itself never mentions
+a status code.
 
 **Type in chat: what does the equivalent Go handler have to do
 explicitly, and why might that actually be a good thing?**
@@ -54,7 +54,7 @@ That's a complete, working endpoint. No project generator, no
 
 ## No batteries-included framework
 
-Spring Boot, Django, Express all hand you routing, serialization,
+FastAPI, Django, Express all hand you routing, serialization,
 validation, and a project structure on day one.
 
 `net/http` hands you a `ServeMux` and lets you do the rest.
@@ -68,13 +68,13 @@ validation, and a project structure on day one.
 <!-- incremental_lists: false -->
 
 **This is a deliberate trade-off, not a gap.** Nobody's waiting for Go to
-"get a real framework" the way that sentence might land from a Java or
+"get a real framework" the way that sentence might land from a Python or
 Node background.
 
 <!--
 speaker_note: |
-  Expect "so what's the Go equivalent of Spring Boot?" as a genuine
-  question, not a gotcha, from anyone with an enterprise Java background.
+  Expect "so what's the Go equivalent of Django or FastAPI?" as a genuine
+  question, not a gotcha, from anyone with a Python background.
   The honest answer is "there isn't one you're expected to reach for by
   default" - sit with that rather than rushing to name Gin as a patch.
 -->
@@ -106,8 +106,8 @@ before trusting one.
 
 ## JSON runs on struct tags
 
-Java's Jackson uses `@JsonProperty`. Python's Pydantic uses class-level
-config. Go attaches plain string metadata directly to fields:
+Python's Pydantic uses class-level `Field(alias=...)` config to control a
+field's JSON name. Go attaches plain string metadata directly to fields:
 
 ```go
 type Item struct {
@@ -238,8 +238,8 @@ misrouted, silently.
 
 ## No automatic exception-to-status translation
 
-Spring's `@ExceptionHandler` maps a thrown exception to an HTTP response,
-often without any individual controller method thinking about it.
+FastAPI's `@app.exception_handler` maps a raised exception to an HTTP
+response, often without any individual endpoint function thinking about it.
 
 Go has no exceptions in that sense. **Every handler decides its own
 status code, explicitly, every time.**
@@ -688,8 +688,8 @@ then confirm `/ping` responds from the host exactly like it did with
 
 ## Back to the opening scenario
 
-Spring's `@ExceptionHandler` translated a thrown exception into a status
-code somewhere you never had to look.
+FastAPI's `@app.exception_handler` translated a raised exception into a
+status code somewhere you never had to look.
 
 **A Go handler decides its own status code, explicitly, every single
 time — `writeServiceError` maps `ErrNotFound` to 404 and `ErrValidation`

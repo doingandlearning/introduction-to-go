@@ -32,7 +32,6 @@ Why protobuf over JSON?
 
 <!-- end_slide -->
 
-## The client asked for this section specifically
 
 Before any gRPC mechanics: **why would you choose protobuf as your
 data format at all**, instead of the JSON you already know from Topic
@@ -259,7 +258,7 @@ This is genuinely different.
 
 <!-- incremental_lists: false -->
 
-If you've used Avro or protobuf already in a Java shop, the *concept*
+If you've used Avro or protobuf already in a Python shop, the *concept*
 feels familiar. If not, expect this to feel like more setup friction
 than anything else in the course -- because it genuinely is.
 

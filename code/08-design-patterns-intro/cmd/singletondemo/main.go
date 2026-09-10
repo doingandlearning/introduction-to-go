@@ -2,10 +2,11 @@
 //
 //  1. Two separate calls to config.GetConfig() return the exact same
 //     pointer.
+//
 //  2. Even when many goroutines call it concurrently, the underlying
 //     loader only runs once.
 //
-//	go run ./cmd/singletondemo
+//     go run ./cmd/singletondemo
 package main
 
 import (
@@ -14,6 +15,8 @@ import (
 
 	"example.com/patterns-intro/internal/config"
 )
+
+var Cfg = config.GetConfig() // global variable, initialized once at program start
 
 func main() {
 	// Part 1: same pointer from two call sites.

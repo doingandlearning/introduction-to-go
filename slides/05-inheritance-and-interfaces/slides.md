@@ -11,11 +11,7 @@ type MyError struct{}
 
 func (e *MyError) Error() string { return "something broke" }
 
-func doWork() error {
-    var e *MyError = nil
-    // ... some logic that never sets e ...
-    return e
-}
+
 
 func main() {
     err := doWork()

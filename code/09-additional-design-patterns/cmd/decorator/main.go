@@ -30,6 +30,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 // handing control to whatever it wraps.
 func HeaderMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("adding X-Powered-By header")
 		w.Header().Set("X-Powered-By", "decorator-demo")
 		next.ServeHTTP(w, r)
 	})
